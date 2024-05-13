@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlineLightMode, MdOutlineDarkMode } from "react-icons/md";
-// import { useTheme } from "./ThemeContext";
 import client from "../assets/sam.jpg";
 
 const Header = () => {
   const [darkTheme, setDarkTheme] = useState(false);
-  // const { theme, toggleTheme } = useTheme();
   
   const toggleColor = () => {
     setDarkTheme(!darkTheme);

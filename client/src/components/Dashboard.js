@@ -1,3 +1,4 @@
+//src/components/Dashboard.js
 import React from 'react';
 import ClientList from './ClientList';
 import ServiceForm from './ServiceForm';
@@ -13,3 +14,5 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
+
