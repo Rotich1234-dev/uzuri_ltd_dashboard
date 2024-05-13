@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Chart as ChartJS,
@@ -58,3 +59,15 @@ const OurChart = () => {
 }
 
 export default OurChart
+
+
+};
+
+
+const OurChart = () => {
+  return (
+    <Bar options={options} data={data} />
+  )
+}
+
+export default OurChart;
