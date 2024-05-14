@@ -1,0 +1,416 @@
+{
+  "Feedbacks": [
+    {
+      "id": "1",
+      "Name": "Charity Wanjiku",
+      "Feedback": "You have the the construction materials thank you"
+    },
+    {
+      "id": "2",
+      "Name": "Simon Mwangi",
+      "Feedback": "Your materials are very affordable"
+    },
+    {
+      "id": "3",
+      "Name": "Victor Mutethia",
+      "Feedback": "I liked the services, thank you for the response"
+    },
+    {
+      "id": "4",
+      "Name": "Emmanuel Kimwaki",
+      "Feedback": "Its been five years , still using the tiles  I bought from yo"
+    },
+    {
+      "id": "5",
+      "Name": "Immanuel Cheruiyot",
+      "Feedback": "I am glad I found your Company"
+    },
+    {
+      "id": "6",
+      "Name": "George Okumu",
+      "Feedback": "Very affordable compared to o"
+    },
+    {
+      "id": "7",
+      "Name": "Sang Wyclife",
+      "Feedback": "Always on time, keep up"
+    },
+    {
+      "id": "8",
+      "Name": "Sydney Mukisira",
+      "Feedback": "Your workers are efficient and reliable."
+    },
+    {
+      "id": "9",
+      "Name": "Sarah Wanjiku",
+      "Feedback": "Can you please and houses you list of materials?"
+    },
+    {
+      "id": "10",
+      "Name": "Abaadir",
+      "Feedback": "Which areas you Located?"
+    }
+  ],
+  "materials": [
+    {
+      "id": "101",
+      "material": "Cement",
+      "price": 899,
+      "quantity": 100,
+      "stock_in": 150,
+      "stock_out": 50
+    },
+    {
+      "id": "102",
+      "material": "Paint",
+      "price": 1599,
+      "quantity": 30,
+      "stock_in": 50,
+      "stock_out": 20
+    },
+    {
+      "id": "103",
+      "material": "Sand",
+      "price": 1579,
+      "quantity": 5,
+      "stock_in": 10,
+      "stock_out": 5
+    },
+    {
+      "id": "104",
+      "material": "Metals",
+      "price": 1299,
+      "quantity": 40,
+      "stock_in": 60,
+      "stock_out": 20
+    },
+    {
+      "id": "105",
+      "material": "Nails",
+      "price": 290,
+      "quantity": 500,
+      "stock_in": 800,
+      "stock_out": 300
+    },
+    {
+      "id": "106",
+      "material": "PVC",
+      "price": 599,
+      "quantity": 80,
+      "stock_in": 100,
+      "stock_out": 20
+    },
+    {
+      "id": "107",
+      "material": "Bricks",
+      "price": 590,
+      "quantity": 3000,
+      "stock_in": 4000,
+      "stock_out": 1000
+    },
+    {
+      "id": "108",
+      "material": "Timber",
+      "price": 200,
+      "quantity": 150,
+      "stock_in": 100,
+      "stock_out": 50
+    },
+    {
+      "id": "109",
+      "material": "Stone",
+      "price": 25000,
+      "quantity": 2000,
+      "stock_in": 2500,
+      "stock_out": 500
+    },
+    {
+      "id": "110",
+      "material": "Tile",
+      "price": 0.79,
+      "quantity": 1500,
+      "stock_in": 2100,
+      "stock_out": 600
+    },
+    {
+      "id": "111",
+      "material": "Glass",
+      "price": 299,
+      "quantity": 120,
+      "stock_in": 150,
+      "stock_out": 30
+    },
+    {
+      "id": "112",
+      "material": "Plywood",
+      "price": 489,
+      "quantity": 60,
+      "stock_in": 110,
+      "stock_out": 50
+    },
+    {
+      "id": "113",
+      "material": "PVC",
+      "price": 599,
+      "quantity": 80,
+      "stock_in": 100,
+      "stock_out": 20
+    },
+    {
+      "id": "114",
+      "material": "Concrete Tiles",
+      "price": 449,
+      "quantity": 430,
+      "stock_in": 500,
+      "stock_out": 70
+    }
+  ],
+  "user": [
+    {
+      "firstName": "hello",
+      "lastName": "World",
+      "email": "helloworld@gmail.com",
+      "contact": "0700101010",
+      "address1": "Nairobi",
+      "address2": "Kiambu",
+      "position": "Manager",
+      "id": "1"
+    },
+    {
+      "firstName": "Victor",
+      "lastName": "Muteithia",
+      "email": "vicmut@gmail.com",
+      "contact": "0777890234",
+      "address1": "Nairobi",
+      "address2": "Kiambu",
+      "position": "CEO",
+      "id": "2"
+    },
+    {
+      "firstName": "Charity",
+      "lastName": "Wanjiru",
+      "email": "charwan@gmail.com",
+      "contact": "0710203040",
+      "address1": "Nairobi",
+      "address2": "Kenya",
+      "position": "Owner",
+      "id": "3"
+    },
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "johndoe@gmail.com",
+      "contact": "0799345678",
+      "address1": "New York",
+      "address2": "Manhattan",
+      "position": "admin",
+      "id": "4"
+    },
+    {
+      "firstName": "Mary",
+      "lastName": "Jacobs",
+      "email": "maryjacobs@gmail.com",
+      "contact": "0722156709",
+      "address1": "London",
+      "address2": "Manchester",
+      "position": "Sales",
+      "id": "5"
+    },
+    {
+      "firstName": "Nick",
+      "lastName": "Bob",
+      "email": "bobnick@gmail.com",
+      "contact": "0789654456",
+      "address1": "Paris",
+      "address2": "Troyes",
+      "position": "Product Manager",
+      "id": "6"
+    },
+    {
+      "firstName": "Ada",
+      "lastName": "Shelby",
+      "email": "shelbyada@gmail.com",
+      "contact": "0775789076",
+      "address1": "Birmingham",
+      "address2": "California",
+      "position": "Sales Manager",
+      "id": "7"
+    },
+    {
+      "firstName": "Michael ",
+      "lastName": "Abel",
+      "email": "mikeabel@gmail.com",
+      "contact": "0744785239",
+      "address1": "Milan",
+      "address2": "Barcelona",
+      "position": "Admin",
+      "id": "8"
+    },
+    {
+      "firstName": "James",
+      "lastName": "Dennis",
+      "email": "jamesdennis@gmail.com",
+      "contact": "0718336779",
+      "address1": "Tokyo",
+      "address2": "Beijing",
+      "position": "Tech Support",
+      "id": "9"
+    },
+    {
+      "firstName": "Max",
+      "lastName": "Andrew",
+      "email": "maxandy@gmail.com",
+      "contact": "0711230579",
+      "address1": "Lagos",
+      "address2": "Copenhagen",
+      "position": "CFO",
+      "id": "10"
+    },
+    {
+      "firstName": "Peter",
+      "lastName": "Jackson",
+      "email": "petejack@gmail.com",
+      "contact": "0754321567",
+      "address1": "San Diego",
+      "address2": "Boston",
+      "position": "COO",
+      "id": "11"
+    },
+  
+    {
+      "id": "db1f",
+      "firstName": "Simon ",
+      "lastName": "Mwangi",
+      "email": "simonmwangikangi@gmail.com",
+      "contact": "0797222488",
+      "address1": "47",
+      "address2": "001",
+      "position": "Manager"
+    }
+   
+  ],
+  "contacts": [
+    {
+      "firstName": "hello",
+      "lastName": "World",
+      "email": "helloworld@gmail.com",
+      "contact": "0700101010",
+      "address1": "Nairobi",
+      "address2": "Kiambu",
+      "position": "Civil Engineer",
+      "id": "1"
+    },
+    {
+      "firstName": "Victor",
+      "lastName": "Muteithia",
+      "email": "vicmut@gmail.com",
+      "contact": "0777890234",
+      "address1": "Nairobi",
+      "address2": "Architect",
+      "position": "CEO",
+      "id": "2"
+    },
+    {
+      "firstName": "Charity",
+      "lastName": "Wanjiru",
+      "email": "charwan@gmail.com",
+      "contact": "0710203040",
+      "address1": "Nairobi",
+      "address2": "Kenya",
+      "position": "Plumber",
+      "id": "3"
+    },
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "johndoe@gmail.com",
+      "contact": "0799345678",
+      "address1": "New York",
+      "address2": "Manhattan",
+      "position": "Electrical Engineer",
+      "id": "4"
+    },
+    {
+      "firstName": "Mary",
+      "lastName": "Jacobs",
+      "email": "maryjacobs@gmail.com",
+      "contact": "0722156709",
+      "address1": "London",
+      "address2": "Manchester",
+      "position": "Architect",
+      "id": "5"
+    },
+    {
+      "firstName": "Nick",
+      "lastName": "Bob",
+      "email": "bobnick@gmail.com",
+      "contact": "0789654456",
+      "address1": "Paris",
+      "address2": "Troyes",
+      "position": "Quantity Survey",
+      "id": "6"
+    },
+    {
+      "firstName": "Ada",
+      "lastName": "Shelby",
+      "email": "shelbyada@gmail.com",
+      "contact": "0775789076",
+      "address1": "Birmingham",
+      "address2": "California",
+      "position": "Foreman",
+      "id": "7"
+    },
+    {
+      "firstName": "Michael ",
+      "lastName": "Abel",
+      "email": "mikeabel@gmail.com",
+      "contact": "0744785239",
+      "address1": "Milan",
+      "address2": "Barcelona",
+      "position": "Software Engineer",
+      "id": "8"
+    },
+    {
+      "firstName": "James",
+      "lastName": "Dennis",
+      "email": "jamesdennis@gmail.com",
+      "contact": "0718336779",
+      "address1": "Tokyo",
+      "address2": "Beijing",
+      "position": "Tech Support",
+      "id": "9"
+    },
+    {
+      "firstName": "Max",
+      "lastName": "Andrew",
+      "email": "maxandy@gmail.com",
+      "contact": "0711230579",
+      "address1": "Lagos",
+      "address2": "Nigeria",
+      "position": "Civil Engineer",
+      "id": "10"
+    },
+    {
+      "firstName": "Peter",
+      "lastName": "Jackson",
+      "email": "petejack@gmail.com",
+      "contact": "0754321567",
+      "address1": "San Diego",
+      "address2": "Boston",
+      "position": "Quantity Survey",
+      "id": "11"
+    },
+  
+    {
+      "id": "db1f",
+      "firstName": "Simon ",
+      "lastName": "Mwangi",
+      "email": "simonmwangikangi@gmail.com",
+      "contact": "0797222488",
+      "address1": "47",
+      "address2": "001",
+      "position": "Software Engineer"
+    }
+   
+  ]
+}
