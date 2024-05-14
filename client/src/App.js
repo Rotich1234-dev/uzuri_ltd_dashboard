@@ -1,15 +1,22 @@
-import React from 'react';
+
+
+import React from 'react'
 import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import LoginForm from './components/Authentification';
 import Main from './components/Main';
-// import Header from './components/Header';
 import { Element } from 'react-scroll';  // Import Element to wrap section components
 
 const App = () => {
   return (
     <div className="flex flex-col h-screen">
-      {/* <Header /> */}
       <main className='w-full bg-slate-200 flex'>
         <Sidebar />
+        {<Main />}
+        <Header />
+        <LoginForm />
+
+
         <div className="flex-grow">
           {/* Ensure that your Main component or individual sections have Element wrappers with the correct IDs */}
           <Element name="dashboard">
@@ -45,10 +52,12 @@ const App = () => {
           </Element>
         </div>
       </main>
-    </div>
-  )
+    </div>
+  )
 }
 
+
 export default App;
+
 
 
