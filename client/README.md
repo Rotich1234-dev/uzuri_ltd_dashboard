@@ -1,70 +1,53 @@
-# Getting Started with Create React App
+# React + Vite
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Project PETWILL Dashboard README
 
-## Available Scripts
+## Overview
+This project is a **dashboard** prepared for PETWILL constuction company that built using **React JS** and **Vite** dependancies. It provides a user-friendly interface for the staff at PEWTILL that is essential for visualizing data and managing various aspects of the company. Whether you're tracking PETWILL'S analytics, managing users, or displaying important information, such as available materials, scheduled company meetings, or demographic data, this dashboard was designed to do it all .
 
-In the project directory, you can run:
+## Features
+- **Data Visualization**: The PETWILL dashboard utilizes charts, graphs, and tables to present company data and construction materials effectively and neatly
+- **User Management**: The dashboard provides a feature where the user can Manage user staff accounts, permissions, and profiles.
+- **Authentication**: The dashboard also Implements secure authentication for PETWILL staff user access.
+- **Customer Feedback**: The PETWILL dashboard provides detailed customer feedback form that allows PETWILL staff to track customer feedback on services and sales made. 
+- **Error Handling**: Handle errors gracefully and provide meaningful feedback to users.
+- **Sales Performance Analysis**: The PETWILL dashboard provides a well analysed sales performance data on th dashboard so that company stakeholders can Identify potential tarhet maret opportunities and potential custmers effectively. 
+- **Routing**: The setup provides for proper linking between different pages within the dashboard that makes the experience seemles.
+- **Stock Tracking**: The PETWILL dashboard provides the PETWILL staff with the efficiency to easily track construction material stock within the dashboard. This allows the company to avoid stockouts or overstocks
+- **Responsive Design**: The dashboard adapts seamlessly to different screen sizes, ensuring a consistent experience across devices.
+- **Financial Tracking**:  The PETWILL dashboard is able to monitor procurement costs and budget allocations for construction materials on the dashboard. This allows the financial department to track losses and profits within the company
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Getting Started
+1. **Clone the Repository**: Start by cloning this repository to your local machine.
+2. **Install Dependencies**: Run `npm install` or `yarn install` to install the necessary packages.
+3. **Configuration**: Customize the configuration files (if needed) to connect to your backend services or APIs.
+4. **Run Locally**: Use `npm start` or `yarn start` to launch the development server and view the dashboard in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Components
+The dashboard includes the following components:
 
-### `npm test`
+1. **Dashboard Home**: An overview of key metrics and data visualizations for PETWILL construction LTD.
+2. **User Management**: A component that allowes the authorized user to Add, edit, and delete user accounts.
+3. **Analytics**: This component is meant to provide PETWILL users with a View of the charts and graphs related to the company's performance.
+4. **Contacts Information**: This component provides a form for filling out STAFF details and buildin a staff profile. 
+5. **Calendar**: This compnent provides a calendar that can be used to showcase company scheduled meetings as well as important company dates. 
+6. **Charts**: This component shows a window with interactive analytical charts that analyse importamt company data. 
+7. **Invoice Balances**: The PETWILL dashboard provides an invoice balance component that lists all invoices within the PETWILL company so as to provid a further better understanding about the company"s financila position. 
+8. **FAQs**: This component provides for most asked and most important querries about the company and what it does.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Team Members
+This project was done by group F members who were both very committed and are listed below: 
+1. Charity as the Scram Master
+2. Emmanuel as a commited member
+3. Victor as a commited member
+4. Simon as a commited member
 
-### `npm run build`
+Contributions are welcome! If you find any issues or have suggestions for improvements, feel free to open an issue or submit a pull request.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## License
+This project is licensed under the MIT License. 
+## Acknowledgments
+- Inspired by the shear will to get really good and one day get paid. 
+- We would like to acknowlede ourselves and thank ourselves. 
+- Thanks to the [TM George Okumu] for his amazing support.
