@@ -8,7 +8,7 @@ import Design from "../assets/design.png";
 
 const Main = () => {
   return (
-    <section className="w-4/5 grow bg-gradient-to-b from-gray-400 via-cyan to-white h-screen overflow-y-auto flex flex-col justify-start items-center gap-2 p-4">
+    <section className="w-full grow bg-gradient-to-b from-gray-400 via-cyan to-white h-screen overflow-y-auto flex flex-col justify-start items-center gap-2 p-4">
       <Header />
       <h1 className="text-3xl text-black font-semibold">Services</h1>
       <div className="text-xl cursor-pointer"></div>
