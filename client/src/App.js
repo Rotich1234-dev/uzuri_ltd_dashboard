@@ -1,42 +1,63 @@
-// import React from 'react';
-// import { ThemeProvider } from './components/ThemeContext'; // Adjust the import path accordingly
-// import Sidebar from './components/Sidebar';
-// import LoginForm from './components/Authentification';
-// import Main from './components/Main'
 
-// const App = () => {
-//   return (
-//     <ThemeProvider>
-//       <div>
-//         <main className='w-full bg-slate-200 h-screen flex justify-between items-centers'>
-//           <Sidebar />
-//           <LoginForm />
-//           <Main />
-//         </main>
-//       </div>
-//     </ThemeProvider>
-//   );
-// }
-
-// export default App;
 
 import React from 'react'
 import Sidebar from './components/Sidebar';
-// import Main from './components/Main';
 import Header from './components/Header';
 import LoginForm from './components/Authentification';
+import Main from './components/Main';
+import { Element } from 'react-scroll';  // Import Element to wrap section components
 
 const App = () => {
   return (
-    <div>
-      <main className='w-full bg-slate-200 h-screen flex justify-between items-centers'>
+    <div className="flex flex-col h-screen">
+      <main className='w-full bg-slate-200 flex'>
         <Sidebar />
-        {/* <Main /> */}
+        {<Main />}
         <Header />
         <LoginForm />
 
+
+        <div className="flex-grow">
+          {/* Ensure that your Main component or individual sections have Element wrappers with the correct IDs */}
+          <Element name="dashboard">
+            {/* Content of Dashboard */}
+            <Main />
+          </Element>
+          <Element name="client-list">
+            {/* Content of Client List */}
+          </Element>
+          <Element name="service-form">
+            {/* Content of Service Form */}
+          </Element>
+          <Element name="fee-calculator">
+            {/* Content of Fee Calculator */}
+          </Element>
+          <Element name="report-generator">
+            {/* Content of Report Generator */}
+          </Element>
+          <Element name="invoice-generator">
+            {/* Content of Invoice Generator */}
+          </Element>
+          <Element name="email">
+            {/* Content of Email */}
+          </Element>
+          <Element name="help-desk">
+            {/* Content of Help Desk */}
+          </Element>
+          <Element name="calendar">
+            {/* Content of Calendar */}
+          </Element>
+          <Element name="authentication">
+            {/* Content of Authentication */}
+          </Element>
+        </div>
       </main>
     </div>
   )
 }
+
+
 export default App;
+
+
+

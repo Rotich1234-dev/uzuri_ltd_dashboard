@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Message = () => {
+const Email = () => {
   return (
-    <div>Message</div>
+    <div>Email</div>
   )
 }
 
-export default Message
+export default Email
