@@ -90,7 +90,7 @@ function SideBar({ThemeStyles}) {
 <Item
         icon={<ContactPage/>}
         title="Clients"
-        to="/clients"
+        to="/ClientList"
       />
       </Box>    
       
