@@ -93,6 +93,86 @@
       "telephone": "4657892845",
       "clientCategory": "Industrial",
       "boreholeLocations": "Pangani"
+    },
+    {
+      "id": "5894",
+      "name": "Christopher Opondo",
+      "address": "opondo77chris@gmail.com",
+      "telephone": "0726343350",
+      "clientCategory": "Commercial",
+      "boreholeLocations": "BP"
+    },
+    {
+      "id": "e5f2",
+      "name": "Samuel Omoding",
+      "address": "jumaomoding@gmail.com",
+      "telephone": "0707195202",
+      "clientCategory": "Commercial",
+      "boreholeLocations": "Villa"
+    },
+    {
+      "id": "02a4",
+      "name": "Samuel Omoding",
+      "address": "jumaomoding@gmail.com",
+      "telephone": "0707195202",
+      "clientCategory": "Commercial",
+      "boreholeLocations": "Villa"
+    },
+    {
+      "id": "1a16",
+      "name": "Samuel Omoding",
+      "address": "jumaomoding@gmail.com",
+      "telephone": "0707195202",
+      "clientCategory": "Commercial",
+      "boreholeLocations": "Villa"
+    },
+    {
+      "id": "0285",
+      "name": "Samuel Omoding",
+      "address": "jumaomoding@gmail.com",
+      "telephone": "0707195202",
+      "clientCategory": "Commercial",
+      "boreholeLocations": "Villa"
+    },
+    {
+      "id": "108b",
+      "name": "Shadrack Omoding",
+      "address": "bill.shadrack@gmail.com",
+      "telephone": "0712638871",
+      "clientCategory": "Domestic",
+      "boreholeLocations": "Tasia"
+    },
+    {
+      "id": "3bf9",
+      "name": "Christopher Opondo",
+      "address": "opondo77chris@gmail.com",
+      "telephone": "0726343350",
+      "clientCategory": "Domestic",
+      "boreholeLocations": "Kitale"
+    },
+    {
+      "id": "b57a",
+      "name": "Anna Okupoleui",
+      "address": "anna@yahoo.com",
+      "telephone": "0726343350",
+      "clientCategory": "Domestic",
+      "boreholeLocations": "Baringo"
+    },
+    {
+      "id": "d8e3",
+      "name": "Paul Mwangi",
+      "address": "pm123@gmail.com",
+      "telephone": "089899390",
+      "clientCategory": "Industrial",
+      "boreholeLocations": "Jinja"
+    },
+    {
+      "id": "054e",
+      "name": "Shadrack Omoding",
+      "address": "bill.shadrack@gmail.com",
+      "telephone": "0712638871",
+      "clientCategory": "Commercial",
+      "boreholeLocations": "Mukono"
     }
   ]
 }
