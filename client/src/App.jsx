@@ -10,8 +10,6 @@ import RegisterClient from "./components/RegisterClient";
 import FeeCalculator from "./components/FeeCalculator"
 import Home from "./components/Home";
 import Reports from "./components/Reports";
-// import OurChart from "./components/OurChart";
-import Chart from "./components/Chart";
 import ClientList from "./components/ClientList";
 
 function App () {
@@ -39,8 +37,6 @@ function App () {
         <Route path="/Home" element={<Home />}/>
         <Route path="/Invoice" element={<Invoice ThemeStyles={ThemeStyles} />}/>
         <Route path="/Reports" element={<Reports />}/>
-        {/* <Route path="/OurChart" element={<OurChart ThemeStyles={ThemeStyles}/>}/> */}
-        <Route path="/Chart" element={<Chart ThemeStyles={ThemeStyles}/>}/>
         <Route path="/ClientList" element={<ClientList ThemeStyles={ThemeStyles}/>}/>
       </Routes> 
       </main>

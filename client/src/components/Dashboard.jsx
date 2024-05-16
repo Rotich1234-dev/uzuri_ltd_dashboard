@@ -1,13 +1,19 @@
 import React from "react";
 import DonutLargeIcon from "@mui/icons-material/DonutLarge";
-import { Box, IconButton, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import Survey from "../assets/survey.png";
 import Testing from "../assets/testing.png";
 import Equipment from "../assets/equipment.png";
 import Design from "../assets/design.png";
 import { Link } from "react-router-dom";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 
 const Dashboard = ({ ThemeStyles }) => {
+  const handleBackClick = () => {
+    navigate('/home');
+  };
+
   return (
     <div
       className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto"
@@ -132,6 +138,12 @@ const Dashboard = ({ ThemeStyles }) => {
           </Link>
         </div>
       </Box>
+      <button 
+          className="text-gray-500 hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          onClick={handleBackClick}
+        >
+          <ArrowBackIcon /> Back
+        </button>
     </div>
   );
 };
