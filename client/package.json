@@ -23,6 +23,7 @@
     "@react-pdf/renderer": "^3.4.4",
     "axios": "^1.6.8",
     "browser": "^0.2.6",
+    "emailjs-com": "^3.2.0",
     "formik": "^2.4.5",
     "js-cookie": "^3.0.5",
     "json-server": "^1.0.0-alpha.23",
