@@ -5,7 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import Authentication from "./components/Authentication";
 import Staff from "./components/Staff";
 import Invoice from "./components/Invoice";
-import Dashboard from "./components/Dashboard
+import Dashboard from "./components/Dashboard";
 import RegisterClient from "./components/RegisterClient";
 import FeeCalculator from "./components/FeeCalculator"
 import Home from "./components/Home";
