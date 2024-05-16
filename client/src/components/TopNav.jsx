@@ -8,7 +8,7 @@ import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import { Link } from 'react-router-dom';
 function TopNav({toggleColor,darkTheme}) {
   const ThemeStyles={
-    backgroundColor:darkTheme?"rgd(23, 5, 5)":"rgb(84, 35, 13)",
+    backgroundColor: darkTheme ? "rgb(107, 114, 128)" : "rgb(22, 78, 99)", 
     color:darkTheme?"rgb(13, 13, 13)":"rgb(255 255 255)",
   };
   return (

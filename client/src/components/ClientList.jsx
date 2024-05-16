@@ -1,32 +1,39 @@
 import React from "react";
-import db from "/root/Development/code/project5/uzuri_ltd_dashboard/client/src/db.json";
+import db from "../db.json";
 
-const ClientList = () => {
+const ClientList = ({ ThemeStyles }) => {
   return (
-    <div className="flex flex-wrap justify-center">
-      <h2 className="text-2xl font-bold mb-4 text-center w-full">
+    <div
+    className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto"
+    style={ThemeStyles}>      
+    <h2 className="text-2xl font-bold mb-4 text-center w-full">
         OUR CLIENT LIST
       </h2>
-      {db.contacts.map((contact) => (
-        <div
-          key={contact.id}
-          className="max-w-sm rounded overflow-hidden shadow-lg m-4"
-        >
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">
-              {contact.firstName} {contact.lastName}
+      <div className="flex flex-wrap justify-center">
+        {db.clients.map((client) => (
+          <div
+            key={client.id}
+            className="max-w-sm rounded overflow-hidden shadow-lg m-4"
+          >
+            <div className="px-6 py-4">
+              <div className="font-bold text-xl mb-2">
+                {client.name}
+              </div>
+              <p className="text-blue-600 text-base">
+                Name: {client.name} <br />
+                Address: {client.address} <br />
+                Telephone: {client.telephone} <br />
+                Clientcategory: {client.clientCategory} <br />
+                Boreholelocation: {client.boreholeLocations} <br />
+              </p>
+              
             </div>
-            <p className="text-gray-700 text-base">
-              Email: {contact.email} <br />
-              Contact: {contact.contact} <br />
-              Address: {contact.address1}, {contact.address2} <br />
-              Position: {contact.position}
-            </p>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
 
 export default ClientList;
+

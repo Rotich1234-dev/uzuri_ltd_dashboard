@@ -8,22 +8,16 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import { Link } from 'react-router-dom';
-// import houseImage from '../assets/bg.jpg';
+
 function TopNav({toggleColor,darkTheme}) {
   const ThemeStyles={
-    backgroundColor:darkTheme?"rgd(23, 5, 5)":"rgb(84, 35, 13)",
-    color:darkTheme?"rgb(13, 13, 13)":"rgb(255 255 255)",
-    // backgroundImage: `url(${houseImage})`,
-    // backgroundSize: 'cover',
-    // backgroundPosition: 'center',
-    // backgroundRepeat: 'no-repeat',
-    // backgroundAttachment: 'fixed',
+    backgroundColor: darkTheme ? "rgb(107, 114, 128)" : "rgb(22, 78, 99)", 
+    color: darkTheme ? "rgb(107, 114, 128)" : "rgb(22, 78, 99)", 
   };
   return (
     
-
-    <Box  className="flex justify-between mt-2 p-5" style={ThemeStyles} >
-    {/*searchbar*/}
+    <Box  className="overflow-y-auto flex-col items-center gap-2 flex justify-between mt-2 p-5" style={ThemeStyles} >
+          
     <Box className="flex">
       {/* <input className="text-slate-700 bg-sky-950 " placeholder="search"/> */}
       <IconButton style={ThemeStyles} className="text-slate-700">

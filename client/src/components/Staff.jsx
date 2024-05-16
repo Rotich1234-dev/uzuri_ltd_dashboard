@@ -35,7 +35,8 @@ function StaffTable() {
     };
 
     return (
-      <div>
+      <div className="flex flex-col items-center h-screen overflow-y-auto"
+      >
         <h1 className="text-4xl overflow-hidden m-3 font-bold">TEAM</h1>
         <h3 className=" m-3 ">Managing the team</h3>
         <table className="min-w-full border m-3 border-orange-500">
