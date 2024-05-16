@@ -1,30 +1,28 @@
-import { UpdateTheme,UseTheme } from "./Theme";
+import { UpdateTheme, UseTheme } from "./Theme";
 import SideBar from "./components/SideBar";
 import TopNav from "./components/TopNav";
-import { Routes, Route } from "react-router-dom"
-import Authentication from './components/Authentication';
+import { Routes, Route } from "react-router-dom";
+import Authentication from "./components/Authentication";
 import Staff from "./components/Staff";
 import Invoice from "./components/Invoice";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/Dashboard
 import RegisterClient from "./components/RegisterClient";
 import FeeCalculator from "./components/FeeCalculator"
 import Home from "./components/Home";
 import Reports from "./components/Reports";
-// import OurChart from "./components/OurChart";
-import Chart from "./components/Chart";
 import ClientList from "./components/ClientList";
 
 function App () {
   const darkTheme=UseTheme() 
   const toggleColor=UpdateTheme() 
-  //create the themes
-  const ThemeStyles={
-    backgroundColor:darkTheme?"rgb(46, 45, 45)":"rgb(171, 163, 159)",
-    color:darkTheme?"rgb(240,240,240)":"rgb(26 46 5)",
-  }
-  
-  return (
 
+  //create the themes
+  const ThemeStyles = {
+    backgroundColor: darkTheme ? "rgb(46, 45, 45)" : "rgb(171, 163, 159)",
+    color: darkTheme ? "rgb(240,240,240)" : "rgb(26 46 5)",
+  };
+
+  return (
     <div className="app overflow-hidden" style={ThemeStyles}>
       <SideBar/>
     <main className="content">
@@ -39,16 +37,11 @@ function App () {
         <Route path="/Home" element={<Home />}/>
         <Route path="/Invoice" element={<Invoice ThemeStyles={ThemeStyles} />}/>
         <Route path="/Reports" element={<Reports />}/>
-        {/* <Route path="/OurChart" element={<OurChart ThemeStyles={ThemeStyles}/>}/> */}
-        <Route path="/Chart" element={<Chart ThemeStyles={ThemeStyles}/>}/>
         <Route path="/ClientList" element={<ClientList ThemeStyles={ThemeStyles}/>}/>
       </Routes> 
       </main>
-     
-     </div>
-
-  
-  )
+    </div>
+  );
 }
 
 export default App;
