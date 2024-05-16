@@ -1,8 +1,11 @@
 import React from 'react'
+import Chart from './Chart';
 
 const Invoice = () => {
   return (
-    <div>Invoice</div>
+    <div>
+      <Chart/>
+    </div>
   )
 }
 

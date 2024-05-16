@@ -23,6 +23,18 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 12,
     marginBottom: 5,
+    textAlign: 'justify',
+    lineHeight: 1.5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    color: '#000',
+    fontFamily: 'Times-Roman',
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+    color: '#000',
+    paddingLeft: 20,
   },
 });
 
@@ -40,9 +52,13 @@ Executive Report for Uzuri Limited Company
 Date of Meeting: March 12, 2024
 Time: 2:00 PM - 5:00 PM
 Venue: Uzuri Limited Headquarters
+
 Attendees:
 
-Chairperson: Naomi Mogi, CEO, Uzuri Limited
+1. Chairperson: Naomi Mogi, CEO, Uzuri Limited
+2. Vice Chairperson: Jane Rotich, CFO, Uzuri Limited
+3. Secretary: Omoding Juma, CTO, Uzuri Limited
+4. Treasurer: Eugen Koech, CTO, Uzuri Limited
 Main Agent Representatives:
 Sarah Wanjiku, Head of Pump & Tank Installation
 Jane Rotich, Chief Hydrogeologist
@@ -54,20 +70,17 @@ The meeting commenced at 2:00 PM with a welcome address by Naomi Mogi, CEO, Uzur
 
 2. Pump & Tank Installation
 Presented by: Sarah Wanjiku, Head of Pump & Tank Installation
-
 Overview of Achievements:
-
 Successful completion of 50 major installations in Q1 2024.
 Introduction of new high-efficiency pumps that reduced energy consumption by 15%.
 Expanded service coverage to include remote areas.
 Challenges:
-
 Supply chain delays affecting the timely availability of parts.
 Skilled labor shortages in certain regions.
 Future Plans:
-
 Partnering with local technical institutes to train more technicians.
 Securing alternative suppliers to mitigate delays.
+
 3. Hydrogeological Survey & Reports
 Presented by: Jane Rotich, Chief Hydrogeologist
 
