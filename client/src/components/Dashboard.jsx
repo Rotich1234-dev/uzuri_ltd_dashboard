@@ -139,7 +139,7 @@ const Dashboard = ({ ThemeStyles }) => {
         </div>
       </Box>
       <button 
-          className="text-gray-500 hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-gray-900 text-gray-500 hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           onClick={handleBackClick}
         >
           <ArrowBackIcon /> Back
