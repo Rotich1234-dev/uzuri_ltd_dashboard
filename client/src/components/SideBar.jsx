@@ -71,5 +71,3 @@ function SideBar({ ThemeStyles }) {
 
 export default SideBar;
 
-
-
