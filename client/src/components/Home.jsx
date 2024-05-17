@@ -16,10 +16,12 @@ const Home = ({ ThemeStyles }) => {
     >
       <Box className="justify-between flex" style={ThemeStyles}>
         <div>
-          <h1 className="text-gray-900 text-3xl font-bold mb-2">UZURI LIMITED</h1>
+          <h1 className="text-gray-900 text-3xl font-bold mb-2">
+            UZURI LIMITED
+          </h1>
           <h2 className="text-2xl font-semibold">
-  <span className="text-gray-900">KARIBU !</span>
-</h2>
+            <span className="text-gray-900">KARIBU !</span>
+          </h2>
         </div>
       </Box>
       <Authentication />
@@ -28,7 +30,3 @@ const Home = ({ ThemeStyles }) => {
 };
 
 export default Home;
-
-
-
-
