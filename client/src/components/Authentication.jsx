@@ -1,155 +1,249 @@
-import React from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-
-let isLoggedIn = false;
+import React, { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useUser } from "../UserContext";
 
 function Login({ switchForm, ThemeStyles }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useUser();
+
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: ''
+      email: "",
+      password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().email('Invalid email address').required('Required'),
-      password: Yup.string().min(8, 'Must be at least 8 characters').required('Required')
+      email: Yup.string().email("Invalid email address").required("Required"),
+      password: Yup.string()
+        .min(8, "Must be at least 8 characters")
+        .required("Required"),
     }),
     onSubmit: (values, { setSubmitting }) => {
       console.log(values);
-      isLoggedIn = true;
-
-      fetch("http://127.0.0.1:5000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(values)
+      fetch("http://localhost:3000/users", {
+        method: "GET",
       })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        setSubmitting(false);
-      });
+        .then((res) => res.json())
+        .then((users) => {
+          const user = users.find(
+            (u) => u.email === values.email && u.password === values.password
+          );
+          if (user) {
+            console.log("Login successful");
+            setUser(user);
+            window.location.href = "/dashboard";
+          } else {
+            console.log("Invalid credentials");
+          }
+          setSubmitting(false);
+        });
     },
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '65vh' }}>
-      <form onSubmit={formik.handleSubmit} className="m-3" style={ThemeStyles}>
-        <h2 className="text-3xl font-medium py-2 border-b border-white-950 px-4 text-slate-200 leading-30">Login Form</h2>
-        <div className="flex flex-col items-center gap-y-8 mt-12 w-full px-3">  {/* Adjusted for vertical alignment */}
-          <div className="w-full max-w-md"> {/* Restrict width and align input fields */}
-            <label htmlFor="email" className="block text-xl font-medium leading-6">Email address <span className="text-blue-900">(required)</span></label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              className="mt-1 block w-full px-3 py-2 bg-teal-750 border border-gray-300 rounded-md shadow-xl focus:outline-none focus:ring-orange-900 focus:border-orange-900"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.email}
-            />
-            {formik.touched.email && formik.errors.email ? <div className="text-red-500">{formik.errors.email}</div> : null}
-          </div>
-          <div className="w-full max-w-md">
-            <label htmlFor="password" className="block text-xl font-medium leading-6">Password <span className="text-green-500">(required)</span></label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className="mt-1 block w-full px-3 py-2 bg-teal-750 border border-gray-300 rounded-md shadow-xl focus:outline-none focus:ring-orange-900 focus:border-orange-900"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.password}
-            />
-            {formik.touched.password && formik.errors.password ? <div className="text-red-500">{formik.errors.password}</div> : null}
-          </div>
-        </div>
-        <div className="mt-6 flex items-center justify-center gap-x-6">
-          <button type="submit" className="rounded-md bg-blue-900 px-3 py-2 text-xl font-semibold text-white shadow-xl hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-900">Login</button>
-          <p className="register cursor-pointer" style={{ cursor: 'pointer' }} onClick={switchForm}>Register</p>
-        </div>
-      </form>
-    </div>
-  );
-} 
-
-function Register({ switchForm, ThemeStyles }) {
-  const formik = useFormik({
-    initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-      address: '',
-      position: '',
-      postalCode: ''
-    },
-    validationSchema: Yup.object({
-      firstName: Yup.string().required('Required'),
-      lastName: Yup.string().required('Required'),
-      email: Yup.string().email('Invalid email address').required('Required'),
-      phoneNumber: Yup.string().matches(/^[0-9]+$/, "Must be only digits").min(10, 'Must be exactly 10 digits').max(10, 'Must be exactly 10 digits').required('Required'),
-      address: Yup.string().required('Required'),
-      position: Yup.string().required('Required'),
-      postalCode: Yup.string().required('Required')
-    }),
-    onSubmit: (values, { setSubmitting }) => {
-      console.log(values);
-
-      fetch("http://127.0.0.1:3000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(values)
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        setSubmitting(false);
-      });
-    },
-  });
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '65vh' }}>
-      <form onSubmit={formik.handleSubmit} className="m-3" style={ThemeStyles}>
-        <h2 className="pb-12 text-2xl font-medium py-2 border-white-500 px-4 text-slate-200 leading-30">Registration Form</h2>
-        <div className="grid grid-cols-2 gap-8">
-          {["firstName", "lastName", "email", "phoneNumber", "address", "position", "postalCode"].map(field => (
-            <div key={field}>
-              <label htmlFor={field} className="block text-xl font-medium">
-                {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}<span className="text-blue-900">(required)</span>
+    <div
+      className="flex flex-col items-center justify-center h-screen"
+      style={ThemeStyles}
+    >
+      <div className="max-w-md w-full bg-gray-500 shadow-lg rounded-lg mb-9">
+        <form onSubmit={formik.handleSubmit} className="m-3">
+          <h2 className="text-2xl font-medium py-2 border-b border-gray-300 text-gray-700 mb-4">
+            Login Form
+          </h2>
+          <div className="flex flex-col items-center gap-y-4 mt-2 w-full">
+            <div className="w-full">
+              <label
+                htmlFor="email"
+                className="block text-lg font-medium leading-6"
+              >
+                Email address <span className="text-red-500">*</span>
               </label>
               <input
-                id={field}
-                name={field}
-                type={field === "email" ? "email" : field === "phoneNumber" ? "tel" : "text"}
+                id="email"
+                name="email"
+                type="email"
+                className="mt-1 block w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values[field]}
-                required
-                className="mt-1 block w-full px-3 py-2 bg-teal-750 border border-gray-300 rounded-md shadow-xl focus:outline-none focus:ring-orange-900 focus:border-orange-900"
+                value={formik.values.email}
               />
-              {formik.touched[field] && formik.errors[field] ? <div className="text-orange-500">{formik.errors[field]}</div> : null}
+              {formik.touched.email && formik.errors.email ? (
+                <div className="text-red-500">{formik.errors.email}</div>
+              ) : null}
             </div>
-          ))}
-        </div>
-        <div className="flex justify-center mt-6">
-          <button type="submit" className="rounded-md bg-blue-900 px-3 py-2 text-xl font-semibold text-white shadow-xl hover:bg-green-500">Register</button>
-          <p className="ml-4 cursor-pointer" onClick={switchForm}>Login</p>
-        </div>
-      </form>
+            <div className="w-full">
+              <label
+                htmlFor="password"
+                className="block text-lg font-medium leading-6"
+              >
+                Password <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                className="mt-1 block w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password}
+              />
+              {formik.touched.password && formik.errors.password ? (
+                <div className="text-red-500">{formik.errors.password}</div>
+              ) : null}
+            </div>
+            <div className="w-full mt-2 flex items-center">
+              <input
+                type="checkbox"
+                id="showPassword"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+              />
+              <label htmlFor="showPassword" className="ml-2 text-lg">
+                Show Password
+              </label>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center justify-between">
+            <button
+              type="submit"
+              className="rounded-md bg-blue-600 px-4 py-1 text-lg font-semibold text-white shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Login
+            </button>
+            <p
+              className="text-blue-600 cursor-pointer hover:underline"
+              onClick={switchForm}
+            >
+              Register
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Register({ switchForm, ThemeStyles }) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: Yup.object({
+      username: Yup.string().required("Required"),
+      email: Yup.string().email("Invalid email address").required("Required"),
+      password: Yup.string()
+        .min(8, "Must be at least 8 characters")
+        .required("Required"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
+        .required("Required"),
+    }),
+    onSubmit: (values, { setSubmitting }) => {
+      console.log(values);
+
+      fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setSubmitting(false);
+          switchForm(); // Switch to login form
+        });
+    },
+  });
+
+  return (
+    <div
+      className="flex flex-col items-center justify-center h-screen"
+      style={ThemeStyles}
+    >
+      <div className="max-w-md w-full bg-gray-500 shadow-lg rounded-lg p-2 mb-9">
+        <form onSubmit={formik.handleSubmit} className="m-3">
+          <h2 className="text-2xl font-medium py-2 border-b border-gray-300 text-gray-700 mb-4">
+            Registration Form
+          </h2>
+          <div className="grid grid-cols-1 gap-4 mt-2">
+            {["username", "email", "password", "confirmPassword"].map(
+              (field) => (
+                <div key={field}>
+                  <label
+                    htmlFor={field}
+                    className="block text-lg font-medium leading-6"
+                  >
+                    {field.charAt(0).toUpperCase() + field.slice(1)}{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id={field}
+                    name={field}
+                    type={
+                      field === "email"
+                        ? "email"
+                        : field === "password" || field === "confirmPassword"
+                        ? showPassword
+                          ? "text"
+                          : "password"
+                        : "text"
+                    }
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values[field]}
+                    required
+                    className="mt-1 block w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  {formik.touched[field] && formik.errors[field] ? (
+                    <div className="text-red-500">{formik.errors[field]}</div>
+                  ) : null}
+                </div>
+              )
+            )}
+            <div className="w-full mt-2 flex items-center">
+              <input
+                type="checkbox"
+                id="showPassword"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+              />
+              <label htmlFor="showPassword" className="ml-2 text-lg">
+                Show Password
+              </label>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center justify-between">
+            <button
+              type="submit"
+              className="rounded-md bg-blue-600 px-4 py-1 text-lg font-semibold text-white shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Register
+            </button>
+            <p
+              className="text-blue-600 cursor-pointer hover:underline"
+              onClick={switchForm}
+            >
+              Login
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
 
 function Form() {
-  const [isLoginForm, setIsLoginForm] = React.useState(true);
+  const [isLoginForm, setIsLoginForm] = useState(true);
 
   const switchForm = () => {
-    setIsLoginForm(prev => !prev);
+    setIsLoginForm((prev) => !prev);
   };
 
   return (
@@ -160,10 +254,7 @@ function Form() {
         <Register switchForm={switchForm} />
       )}
     </div>
-  )
+  );
 }
 
 export default Form;
-
-
-
