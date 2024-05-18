@@ -3,6 +3,9 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import emailjs from "emailjs-com";
+
+emailjs.init("_i-rvf-Vb-3NAy7sG");
 
 const drillingServices = [
   "Symmetric Drilling",
@@ -85,6 +88,61 @@ const Invoice = ({ ThemeStyles }) => {
     totalCostAfterTax: Yup.number().required("Required"),
   });
 
+  const onSubmit = (values, { setSubmitting }) => {
+    console.log(values);
+
+    fetch("http://localhost:3000/invoices", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setSubmitting(false);
+        setSuccessMessage("Invoice created successfully!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setSubmitting(false);
+      });
+
+    // After saving the invoice, also send the email
+    handleSendEmail(values);
+  };
+
+  const handleSendEmail = (values) => {
+    // Construct the templateParams object using form values
+    const templateParams = {
+      to_email: values.clientEmail,
+      to_name: values.clientName,
+      invoice_number: values.invoiceNumber,
+      invoice_date: values.date,
+      services: values.drillingServices.join(", "), // Assuming drillingServices is an array
+      total_cost: values.totalCostAfterTax, // Assuming totalCostAfterTax is the total cost
+    };
+    const serviceId = "service_ubxhk3m";
+    const templateId = "template_s71zm2p";
+    const userId = "_i-rvf-Vb-3NAy7sG";
+
+    // Send the email using EmailJS
+    emailjs
+      .send(serviceId, templateId, templateParams, userId)
+      .then((response) => {
+        console.log("Email sent successfully:", response);
+        alert("Email sent successfully!");
+      })
+      .catch((error) => {
+        console.error("Error sending email:", error);
+        alert("Failed to send email.");
+      });
+  };
+
   const formik = useFormik({
     initialValues: {
       clientName: "",
@@ -102,52 +160,11 @@ const Invoice = ({ ThemeStyles }) => {
       totalCostAfterTax: 0,
     },
     validationSchema: validationSchema,
-    onSubmit: (values, { setSubmitting }) => {
-      console.log(values);
-
-      fetch("http://localhost:3000/invoices", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setSubmitting(false);
-          setSuccessMessage("Invoice created successfully!");
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          setSubmitting(false);
-        });
-    },
+    onSubmit: onSubmit,
   });
 
   const handleBackClick = () => {
     navigate("/dashboard");
-  };
-
-  const handleSendEmail = () => {
-    fetch("http://localhost:3000/send-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formik.values),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setSuccessMessage("Email sent successfully!");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
   };
 
   useEffect(() => {
@@ -236,11 +253,11 @@ const Invoice = ({ ThemeStyles }) => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
             />
             {formik.touched.clientName && formik.errors.clientName ? (
-              <div>{formik.errors.clientName}</div>
+              <div className="text-red-500 text-xs mb-2">
+                {formik.errors.clientName}
+              </div>
             ) : null}
-          </div>
 
-          <div className="text-gray-900 mb-4">
             <label
               className="block text-gray-900 text-sm font-bold mb-2"
               htmlFor="clientEmail"
@@ -257,16 +274,16 @@ const Invoice = ({ ThemeStyles }) => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
             />
             {formik.touched.clientEmail && formik.errors.clientEmail ? (
-              <div>{formik.errors.clientEmail}</div>
+              <div className="text-red-500 text-xs mb-2">
+                {formik.errors.clientEmail}
+              </div>
             ) : null}
-          </div>
 
-          <div className="text-gray-900 mb-4">
             <label
               className="block text-gray-900 text-sm font-bold mb-2"
               htmlFor="clientCategory"
             >
-              Client Category
+              Category:
             </label>
             <select
               id="clientCategory"
@@ -276,19 +293,19 @@ const Invoice = ({ ThemeStyles }) => {
               value={formik.values.clientCategory}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
             >
-              <option value="" label="Select category" />
-              {clientCategories.map((category, index) => (
-                <option key={index} value={category.category}>
+              <option value="">Select Category</option>
+              {clientCategories.map((category) => (
+                <option key={category.category} value={category.category}>
                   {category.category}
                 </option>
               ))}
             </select>
             {formik.touched.clientCategory && formik.errors.clientCategory ? (
-              <div>{formik.errors.clientCategory}</div>
+              <div className="text-red-500 text-xs mb-2">
+                {formik.errors.clientCategory}
+              </div>
             ) : null}
-          </div>
 
-          <div className="text-gray-900 mb-4">
             <label
               className="block text-gray-900 text-sm font-bold mb-2"
               htmlFor="invoiceNumber"
@@ -305,11 +322,11 @@ const Invoice = ({ ThemeStyles }) => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
             />
             {formik.touched.invoiceNumber && formik.errors.invoiceNumber ? (
-              <div>{formik.errors.invoiceNumber}</div>
+              <div className="text-red-500 text-xs mb-2">
+                {formik.errors.invoiceNumber}
+              </div>
             ) : null}
-          </div>
 
-          <div className="text-gray-900 mb-4">
             <label
               className="block text-gray-900 text-sm font-bold mb-2"
               htmlFor="date"
@@ -326,338 +343,190 @@ const Invoice = ({ ThemeStyles }) => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
             />
             {formik.touched.date && formik.errors.date ? (
-              <div>{formik.errors.date}</div>
+              <div className="text-red-500 text-xs mb-2">
+                {formik.errors.date}
+              </div>
             ) : null}
           </div>
 
           <div className="text-gray-900 mb-4">
+            <h2 className="text-xl font-semibold mb-2">Services</h2>
             <label
               className="block text-gray-900 text-sm font-bold mb-2"
               htmlFor="drillingServices"
             >
-              Drilling Services
+              Drilling Services:
             </label>
-            <select
-              id="drillingServices"
-              name="drillingServices"
-              onChange={(e) => {
-                const selectedService = e.target.value;
-                if (
-                  selectedService &&
-                  !formik.values.drillingServices.includes(selectedService)
-                ) {
-                  formik.setFieldValue("drillingServices", [
-                    ...formik.values.drillingServices,
-                    selectedService,
-                  ]);
-                }
-              }}
-              onBlur={formik.handleBlur}
-              value=""
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
-            >
-              <option value="" label="Select service" />
-              {drillingServices.map((drillingService, index) => (
-                <option key={index} value={drillingService}>
-                  {drillingService}
-                </option>
+            <div className="mb-4">
+              {drillingServices.map((service) => (
+                <div key={service}>
+                  <input
+                    type="checkbox"
+                    id={service}
+                    name="drillingServices"
+                    value={service}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    checked={formik.values.drillingServices.includes(service)}
+                    className="mr-2"
+                  />
+                  <label htmlFor={service}>{service}</label>
+                </div>
               ))}
-            </select>
-            {formik.touched.drillingServices &&
-            formik.errors.drillingServices ? (
-              <div>{formik.errors.drillingServices}</div>
+            </div>
+            {formik.touched.drillingServices && formik.errors.drillingServices ? (
+              <div className="text-red-500 text-xs mb-2">
+                {formik.errors.drillingServices}
+              </div>
             ) : null}
-            <ul className="list-disc pl-5 mb-4">
-              {formik.values.drillingServices.map((drillingService, index) => (
-                <li key={index} className="flex items-center justify-between">
-                  {drillingService}
-                  <button
-                    type="button"
-                    className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                    onClick={() =>
-                      formik.setFieldValue(
-                        "drillingServices",
-                        formik.values.drillingServices.filter(
-                          (_, i) => i !== index
-                        )
-                      )
-                    }
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
 
-          <div className="text-gray-900 mb-4">
             <label
               className="block text-gray-900 text-sm font-bold mb-2"
               htmlFor="pumpTypes"
             >
-              Pump Types
+              Pump Types:
             </label>
-            <select
-              id="pumpTypes"
-              name="pumpTypes"
-              onChange={(e) => {
-                const selectedPump = e.target.value;
-                if (
-                  selectedPump &&
-                  !formik.values.pumpTypes.includes(selectedPump)
-                ) {
-                  formik.setFieldValue("pumpTypes", [
-                    ...formik.values.pumpTypes,
-                    selectedPump,
-                  ]);
-                }
-              }}
-              onBlur={formik.handleBlur}
-              value=""
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
-            >
-              <option value="" label="Select pump type" />
-              {pumpTypes.map((pumpType, index) => (
-                <option key={index} value={pumpType}>
-                  {pumpType}
-                </option>
+            <div className="mb-4">
+              {pumpTypes.map((service) => (
+                <div key={service}>
+                  <input
+                    type="checkbox"
+                    id={service}
+                    name="pumpTypes"
+                    value={service}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    checked={formik.values.pumpTypes.includes(service)}
+                    className="mr-2"
+                  />
+                  <label htmlFor={service}>{service}</label>
+                </div>
               ))}
-            </select>
+            </div>
             {formik.touched.pumpTypes && formik.errors.pumpTypes ? (
-              <div>{formik.errors.pumpTypes}</div>
+              <div className="text-red-500 text-xs mb-2">
+                {formik.errors.pumpTypes}
+              </div>
             ) : null}
-            <ul className="list-disc pl-5 mb-4">
-              {formik.values.pumpTypes.map((pumpType, index) => (
-                <li key={index} className="flex items-center justify-between">
-                  {pumpType}
-                  <button
-                    type="button"
-                    className="bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                    onClick={() =>
-                      formik.setFieldValue(
-                        "pumpTypes",
-                        formik.values.pumpTypes.filter((_, i) => i !== index)
-                      )
-                    }
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="text-gray-900 mb-4">
+
             <label
               className="block text-gray-900 text-sm font-bold mb-2"
               htmlFor="plumbingServices"
             >
-              Plumbing Services
+              Plumbing Services:
             </label>
-            <select
-              id="plumbingServices"
-              name="plumbingServices"
-              onChange={(e) => {
-                const selectedService = e.target.value;
-                if (
-                  selectedService &&
-                  !formik.values.plumbingServices.includes(selectedService)
-                ) {
-                  formik.setFieldValue("plumbingServices", [
-                    ...formik.values.plumbingServices,
-                    selectedService,
-                  ]);
-                }
-              }}
-              onBlur={formik.handleBlur}
-              value=""
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
-            >
-              <option value="" label="Select service" />
-              {plumbingServices.map((plumbingService, index) => (
-                <option key={index} value={plumbingService}>
-                  {plumbingService}
-                </option>
+            <div className="mb-4">
+              {plumbingServices.map((service) => (
+                <div key={service}>
+                  <input
+                    type="checkbox"
+                    id={service}
+                    name="plumbingServices"
+                    value={service}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    checked={formik.values.plumbingServices.includes(service)}
+                    className="mr-2"
+                  />
+                  <label htmlFor={service}>{service}</label>
+                </div>
               ))}
-            </select>
-            {formik.touched.plumbingServices &&
-            formik.errors.plumbingServices ? (
-              <div>{formik.errors.plumbingServices}</div>
-            ) : null}
-            <ul className="list-disc pl-5 mb-4">
-              {formik.values.plumbingServices.map((plumbingService, index) => (
-                <li key={index} className="flex items-center justify-between">
-                  {plumbingService}
-                  <button
-                    type="button"
-                    className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                    onClick={() =>
-                      formik.setFieldValue(
-                        "plumbingServices",
-                        formik.values.plumbingServices.filter(
-                          (_, i) => i !== index
-                        )
-                      )
-                    }
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="text-gray-900 mb-4">
+            </div>
+
             <label
               className="block text-gray-900 text-sm font-bold mb-2"
               htmlFor="tankServices"
             >
-              Tank Services
+              Tank Services:
             </label>
-            <select
-              id="tankServices"
-              name="tankServices"
-              onChange={(e) => {
-                const selectedService = e.target.value;
-                if (
-                  selectedService &&
-                  !formik.values.tankServices.includes(selectedService)
-                ) {
-                  formik.setFieldValue("tankServices", [
-                    ...formik.values.tankServices,
-                    selectedService,
-                  ]);
-                }
-              }}
-              onBlur={formik.handleBlur}
-              value=""
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
-            >
-              <option value="" label="Select service" />
-              {tankServices.map((tankService, index) => (
-                <option key={index} value={tankService}>
-                  {tankService}
-                </option>
+            <div className="mb-4">
+              {tankServices.map((service) => (
+                <div key={service}>
+                  <input
+                    type="checkbox"
+                    id={service}
+                    name="tankServices"
+                    value={service}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    checked={formik.values.tankServices.includes(service)}
+                    className="mr-2"
+                  />
+                  <label htmlFor={service}>{service}</label>
+                </div>
               ))}
-            </select>
-            {formik.touched.tankServices && formik.errors.tankServices ? (
-              <div>{formik.errors.tankServices}</div>
-            ) : null}
-            <ul className="list-disc pl-5 mb-4">
-              {formik.values.tankServices.map((tankService, index) => (
-                <li key={index} className="flex items-center justify-between">
-                  {TrackEventService}
-                  <button
-                    type="button"
-                    className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                    onClick={() =>
-                      formik.setFieldValue(
-                        "tankServices",
-                        formik.values.tankServices.filter((_, i) => i !== index)
-                      )
-                    }
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+            </div>
 
-          <div className="text-gray-900 mb-4">
             <label
               className="block text-gray-900 text-sm font-bold mb-2"
               htmlFor="otherServices"
             >
-              Other Services
+              Other Services:
             </label>
-            <select
-              id="otherServices"
-              name="otherServices"
-              onChange={(e) => {
-                const selectedService = e.target.value;
-                if (
-                  selectedService &&
-                  !formik.values.otherServices.includes(selectedService)
-                ) {
-                  formik.setFieldValue("otherServices", [
-                    ...formik.values.otherServices,
-                    selectedService,
-                  ]);
-                }
-              }}
-              onBlur={formik.handleBlur}
-              value=""
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline mb-4"
-            >
-              <option value="" label="Select service" />
-              {otherServices.map((otherService, index) => (
-                <option key={index} value={otherService}>
-                  {otherService}
-                </option>
+            <div className="mb-4">
+              {otherServices.map((service) => (
+                <div key={service}>
+                  <input
+                    type="checkbox"
+                    id={service}
+                    name="otherServices"
+                    value={service}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    checked={formik.values.otherServices.includes(service)}
+                    className="mr-2"
+                  />
+                  <label htmlFor={service}>{service}</label>
+                </div>
               ))}
-            </select>
+            </div>
             {formik.touched.otherServices && formik.errors.otherServices ? (
-              <div>{formik.errors.otherServices}</div>
+              <div className="text-red-500 text-xs mb-2">
+                {formik.errors.otherServices}
+              </div>
             ) : null}
-            <ul className="list-disc pl-5 mb-4">
-              {formik.values.otherServices.map((otherService, index) => (
-                <li key={index} className="flex items-center justify-between">
-                  {otherService}
-                  <button
-                    type="button"
-                    className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                    onClick={() =>
-                      formik.setFieldValue(
-                        "otherServices",
-                        formik.values.otherServices.filter(
-                          (_, i) => i !== index
-                        )
-                      )
-                    }
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
           </div>
 
           <div className="text-gray-900 mb-4">
-            <h2 className="text-xl font-semibold mb-2">Total Cost</h2>
-            <p className="block text-gray-900 text-sm font-bold mb-2">
-              Total Before Tax (Ksh): {formik.values.totalCostBeforeTax}
-            </p>
-            <p className="block text-gray-900 text-sm font-bold mb-2">
-              Tax Amount (Ksh): {formik.values.taxAmount}
-            </p>
-            <p className="block text-gray-900 text-sm font-bold mb-2">
-              Total After Tax (Ksh): {formik.values.totalCostAfterTax}
-            </p>
+            <h2 className="text-xl font-semibold mb-2">Cost Summary</h2>
+            <div className="mb-2">
+              <strong>Total Cost Before Tax:</strong>{" "}
+              {formik.values.totalCostBeforeTax}
+            </div>
+            <div className="mb-2">
+              <strong>Tax Amount:</strong> {formik.values.taxAmount}
+            </div>
+            <div className="mb-2">
+              <strong>Total Cost After Tax:</strong>{" "}
+              {formik.values.totalCostAfterTax}
+            </div>
           </div>
 
-          <div className="mb-6">
+          <div className="flex items-center justify-between">
             <button
+              className="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
-              className="bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-green-900 mr-4"
-              disabled={formik.isSubmitting}
             >
-              {formik.isSubmitting ? "Creating..." : "Create Invoice"}
+              Submit
             </button>
-            <button
+            {/* <button
+              className="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
-              className="bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-700"
               onClick={handleSendEmail}
             >
               Send Email
-            </button>
+            </button> */}
           </div>
         </form>
+
+        <button
+          className="flex items-center mt-6 text-gray-700 hover:text-gray-900"
+          onClick={handleBackClick}
+        >
+          <ArrowBackIcon className="mr-2" />
+          Back to Dashboard
+        </button>
       </div>
-      <button
-        className="flex items-center justify-center bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-gray-900 mb-4"
-        onClick={handleBackClick}
-      >
-        <ArrowBackIcon className="mr-2" /> Back
-      </button>
     </div>
   );
 };
