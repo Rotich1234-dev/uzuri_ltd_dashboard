@@ -80,6 +80,3 @@ const ClientList = ({ ThemeStyles }) => {
 
 export default ClientList;
 
-
-
-
