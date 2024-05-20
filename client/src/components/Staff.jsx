@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect } from "react";
 import { Button, Select, MenuItem, FormControl } from "@mui/material";
 
@@ -7,7 +5,7 @@ function StaffTable() {
     const [tableItems, setTableItems] = useState([])
 
     useEffect(() => {
-        fetch("http://localhost:5000/admin")
+        fetch("http://localhost:3000/admin")
         .then(res => res.json())
         .then(data => setTableItems(data))
     }, [])

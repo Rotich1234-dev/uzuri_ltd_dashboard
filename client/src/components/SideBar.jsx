@@ -1,44 +1,58 @@
-import { Sidebar, Menu, MenuItem } from "react-pro-sidebar"
+import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import MenuIcon from '@mui/icons-material/Menu';
-import { useState } from "react"
+import { useState } from "react";
 import { Box, IconButton } from "@mui/material";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
 import { useUser } from '../UserContext';
 
 const Item = ({ title, to, icon }) => {
   return (
     <Link to={to}>
-      <MenuItem
-        style={{ color: "rgb(200,200,200)" }}
-        icon={icon}
-      >
-        <h4 className="bg-gray-500 text-sm" color="rgb(255,240,200)">{title}</h4>
+      <MenuItem className="text-black hover:text-gray-600" icon={icon}>
+        <h4 className="text-extrabold text-green-300 hover:text-gray-600">{title}</h4>
       </MenuItem>
     </Link>
-  )
-}
+  );
+};
 
-function SideBar({ ThemeStyles }) {
+function SideBar({ toggleColor, darkTheme }) {
   const [isCollapsed, setCollapsed] = useState(false);
   const { user } = useUser();
+  
+  const ThemeStyles = {
+    backgroundColor: darkTheme ? "#16182F" : "LightGray",
+    color: darkTheme ? "White" : "Black"
+  };
+  
+  // const ThemeStyles = {
+  //   backgroundColor: darkTheme ? "rgb(31, 41, 55)" : "rgb(209, 213, 219)", 
+  //   color: darkTheme ? "rgb(255, 255, 255)" : "rgb(10, 10, 10)"
+  // };
+
+  const MenuStyles = {
+    backgroundColor: darkTheme ? "#16182F" : "rgb(255, 255, 255)"
+  };
 
   return (
-    <div className="flex-col w-fit h-screen border-x-4 border-neutral-700 bg-gray-500 border-solid">
+    <div className="flex-col w-fit h-screen" style={ThemeStyles}>
       <Box className="flex-col" style={ThemeStyles}>
         <Sidebar collapsed={isCollapsed} style={ThemeStyles}>
-          <Menu className="bg-gray-500">
+          <Menu style={MenuStyles}>
             <Box>
               <MenuItem
-                className="text-slate-700 justify-between"
+                className="py-2 text-slate-700 justify-between hover:text-gray-600"
                 onClick={() => setCollapsed(!isCollapsed)}
                 icon={isCollapsed ? <MenuIcon /> : undefined}
                 style={{ margin: "10px 0", cursor: "pointer" }}
               >
                 {!isCollapsed && (
-                  <Box className='flex justify-between p-3'>
-                    <h1 className="text-2xl font-bold">UZURI LIMITED</h1>
-                    <IconButton className="text-slate-200" onClick={() => setCollapsed(!isCollapsed)}>
+                  <Box className="flex justify-between p-3">
+                    <h1 className={`text-2xl font-bold ${darkTheme ? 'text-gray-400' : 'text-gray-900'}`}>UZURI LIMITED</h1>
+                    <IconButton
+                      className="text-slate-400 hover:text-gray-600"
+                      onClick={() => setCollapsed(!isCollapsed)}
+                    >
                       <MenuIcon />
                     </IconButton>
                   </Box>
@@ -48,26 +62,27 @@ function SideBar({ ThemeStyles }) {
             {!isCollapsed && (
               <Box>
                 <Box className="mt-3">
-                  <h1 className="text-2xl text-center text-white font-bold">{user?.name || ""}</h1>
-                  <h5 className="text-xl font-bold text-center text-blue-900">{user?.role || "Staff"}</h5>
+                  <h1 className={`text-2xl text-center font-bold ${darkTheme ? 'text-white' : 'text-black'}`}>
+                    {user?.name || ""}
+                  </h1>
+                  <h5 className={`text-xl font-bold text-center ${darkTheme ? 'text-gray-400' : 'text-gray-900'}`}>
+                    {user?.role || "Admin"}
+                  </h5>
                 </Box>
               </Box>
             )}
           </Menu>
-          <Menu className="bg-gray-500">
+          <Menu className="mt-4" style={MenuStyles}>
             <Box>
-              <Item
-                icon={<HomeIcon />}
-                title="Home"
-                to="/Home"
-              />
+              <Item icon={<HomeIcon />} title="Home" to="/Home" />
             </Box>
-            </Menu>
+          </Menu>
         </Sidebar>
       </Box>
     </div>
-  )
+  );
 }
 
 export default SideBar;
+
 
