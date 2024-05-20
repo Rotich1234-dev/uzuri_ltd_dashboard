@@ -20,7 +20,8 @@ function Login({ switchForm, ThemeStyles }) {
     }),
     onSubmit: (values, { setSubmitting }) => {
       console.log(values);
-      fetch("http://localhost:3000/users", {
+      // fetch("http://127.0.0.1:8080/api/auth/admin_login", {
+        fetch("http://localhost:3000/users",{
         method: "GET",
       })
         .then((res) => res.json())
@@ -45,9 +46,6 @@ function Login({ switchForm, ThemeStyles }) {
       className="flex flex-col items-center justify-center h-screen"
       style={{
         ...ThemeStyles,
-        // backgroundImage: 'url("src/assets/Ripples.jpeg")',
-        // backgroundSize: "cover",
-        // backgroundPosition: "center",
       }}
     >
       <div className="max-w-md w-full bg-gray-500 shadow-lg rounded-lg mb-9">
@@ -150,8 +148,9 @@ function Register({ switchForm, ThemeStyles }) {
     }),
     onSubmit: (values, { setSubmitting }) => {
       console.log(values);
+      fetch("http://localhost:3000/users",{
 
-      fetch("http://localhost:3000/users", {
+      // fetch("http://127.0.0.1:8080/api/auth/admin_signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

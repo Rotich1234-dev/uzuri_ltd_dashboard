@@ -7,6 +7,7 @@ const ClientList = ({ ThemeStyles }) => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetch("http://127.0.0.1:8080/api/admin/routes/clients")
@@ -30,15 +31,39 @@ const ClientList = ({ ThemeStyles }) => {
     navigate('/dashboard');
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredClients = clients.filter(client =>
+    client.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const background = {
+    ...ThemeStyles,
+    backgroundColor: '#FFFAFA'
+  };
+
   return (
     <div
       className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto"
-      style={ThemeStyles}
+      style={background}
     >
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-center w-full">
+        <h2 className="text-gray-800 text-2xl font-bold text-center w-full">
           OUR CLIENT LIST
         </h2>
+      </div>
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search clients..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="w-full p-2 border rounded"
+        />
       </div>
       {loading ? (
         <p className="text-center">Loading...</p>
@@ -46,7 +71,7 @@ const ClientList = ({ ThemeStyles }) => {
         <p className="text-center text-red-500">{error}</p>
       ) : (
         <div className="bg-gray-100 flex flex-wrap justify-center">
-          {clients.map((client) => (
+          {filteredClients.map((client) => (
             <div
               key={client.client_id}
               className="max-w-sm rounded overflow-hidden shadow-lg m-4"
@@ -69,7 +94,7 @@ const ClientList = ({ ThemeStyles }) => {
         </div>
       )}
       <button 
-        className="mt-4 bg-gray-900 text-gray-500 hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="py-2 px-3 mt-4 flex items-center justify-center bg-gray-500 text-white font-bold rounded-full focus:outline-none focus:shadow-outline hover:bg-gray-900"
         onClick={handleBackClick}
       >
         <ArrowBackIcon /> Back
@@ -79,7 +104,5 @@ const ClientList = ({ ThemeStyles }) => {
 };
 
 export default ClientList;
-
-
 
 

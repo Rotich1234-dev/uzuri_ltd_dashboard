@@ -37,6 +37,13 @@
       "email": "tuei@gmail.com",
       "password": "uzuri2024",
       "confirmPassword": "uzuri2024"
+    },
+    {
+      "id": "f5f7",
+      "username": "Bill Shaddy",
+      "email": "bill.shadrack@gmail.com",
+      "password": "uzuri2024",
+      "confirmPassword": "uzuri2024"
     }
   ],
   "clients": [
@@ -211,6 +218,88 @@
       "totalCostBeforeTax": 370000,
       "taxAmount": 59200,
       "totalCostAfterTax": 310800
+    }
+  ],
+  "fees": [
+    {
+      "id": "9701",
+      "clientType": "Industrial",
+      "drillingServices": [
+        "Symmetric Drilling"
+      ],
+      "pumpTypes": [
+        "Submersible Electric Pump"
+      ],
+      "depth": "200",
+      "height": "240",
+      "pipeTypes": [
+        "ABS - Acrylonitrile Butadiene Styrene"
+      ],
+      "pipeDiameter": "20",
+      "pipeLength": "230",
+      "numberOfOutlets": "4",
+      "otherServices": [
+        "Pump Maintenance"
+      ],
+      "tankCapacity": "10000",
+      "totalCost": 15243560,
+      "taxAmount": 2102560
+    },
+    {
+      "id": "5a04",
+      "client_id": "13",
+      "clientType": "",
+      "drillingServices": [
+        "Core Drilling"
+      ],
+      "pumpTypes": [
+        "Submersible Electric Pump"
+      ],
+      "depth": "200",
+      "height": "230",
+      "pipeTypes": [
+        "PEX - Cross-linked Polyethylene"
+      ],
+      "pipeDiameter": "35",
+      "pipeLength": "2300",
+      "numberOfOutlets": "4",
+      "otherServices": [
+        "Pump Maintenance"
+      ],
+      "tankCapacity": "10000",
+      "totalCost": 15732152,
+      "taxAmount": 2169952
+    },
+    {
+      "id": "bb2e",
+      "client_id": "15",
+      "clientCategory": {
+        "category": "Domestic",
+        "surveyFee": 7000,
+        "localAuthorityFee": 10000
+      },
+      "drillingServices": [
+        "Geo-technical Drilling"
+      ],
+      "pumpTypes": [
+        "Solar Pump"
+      ],
+      "pumpDepth": "344",
+      "pumpHeight": "300",
+      "pipeTypes": [
+        "PVC - Polyvinyl Chloride",
+        "Copper",
+        "Cast Iron"
+      ],
+      "pipeDiameter": "34",
+      "pipeLength": "2300",
+      "numberOfOutlets": "4",
+      "otherServices": [
+        "Pump Maintenance"
+      ],
+      "tankCapacity": "15000",
+      "totalCost": 23627576,
+      "taxAmount": 3258976
     }
   ]
 }

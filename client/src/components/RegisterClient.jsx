@@ -59,13 +59,18 @@ const RegisterClient = ({ ThemeStyles }) => {
     },
   });
 
+  const background = {
+    ...ThemeStyles,
+    backgroundColor: '#FFFAFA',
+  };
+
   return (
     <div
       className="pb-40 px-5 py-7 p-6 w-full h-screen overflow-y-auto"
-      style={ThemeStyles}
+      style={background}
     >
       <div className="max-w-md mx-auto bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h2 className="text-gray-800 text-2xl text-center mb-4">
+        <h2 className="text-gray-800 fond-bold text-2xl text-center mb-4">
           Register Client
         </h2>
         {successMessage && (
@@ -246,7 +251,7 @@ const RegisterClient = ({ ThemeStyles }) => {
             ) : null}
           </div>
           <button
-            className="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
             type="submit"
             disabled={formik.isSubmitting}
           >
@@ -255,7 +260,7 @@ const RegisterClient = ({ ThemeStyles }) => {
         </form>
       </div>
       <button
-        className="bg-gray-900 text-gray-500 hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="bg-gray-900 text-gray-500 hover:text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
         onClick={handleBackClick}
       >
         <ArrowBackIcon /> Back
