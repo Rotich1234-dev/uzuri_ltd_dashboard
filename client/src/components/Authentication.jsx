@@ -43,11 +43,24 @@ function Login({ switchForm, ThemeStyles }) {
   return (
     <div
       className="flex flex-col items-center justify-center h-screen"
+<<<<<<< HEAD
       style={ThemeStyles}
     >
       <div className="max-w-md w-full bg-gray-500 shadow-lg rounded-lg mb-9">
         <form onSubmit={formik.handleSubmit} className="m-3">
           <h2 className="text-2xl font-medium py-2 border-b border-gray-300 text-gray-700 mb-4">
+=======
+      style={{
+        ...ThemeStyles,
+        // backgroundImage: 'url("src/assets/Ripples.jpeg")',
+        // backgroundSize: "cover",
+        // backgroundPosition: "center",
+      }}
+    >
+      <div className="max-w-md w-full bg-gray-500 shadow-lg rounded-lg mb-9">
+        <form onSubmit={formik.handleSubmit} className="m-3">
+          <h2 className="text-2xl font-medium py-2 border-b border-gray-500 text-gray-700 mb-4">
+>>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
             Login Form
           </h2>
           <div className="flex flex-col items-center gap-y-4 mt-2 w-full">

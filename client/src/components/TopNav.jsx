@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import { Box, IconButton } from "@mui/material";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -10,6 +11,20 @@ function TopNav({ toggleColor, darkTheme }) {
   const ThemeStyles = {
     backgroundColor: darkTheme ? "rgb(107, 114, 128)" : "rgb(22, 78, 99)",
     color: darkTheme ? "rgb(13, 13, 13)" : "rgb(255 255 255)",
+=======
+import React from 'react'
+import { Box,IconButton } from '@mui/material'
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import { Link } from 'react-router-dom';
+function TopNav({toggleColor,darkTheme}) {
+  const ThemeStyles={
+    backgroundColor: darkTheme ? "rgb(107, 114, 128)" : "rgb(22, 78, 99)", 
+    color:darkTheme?"rgb(13, 13, 13)":"rgb(255 255 255)",
+>>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
   };
   return (
     <Box className="flex justify-between mt-2 p-5" style={ThemeStyles}>

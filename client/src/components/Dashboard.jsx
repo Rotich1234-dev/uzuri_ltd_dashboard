@@ -6,11 +6,20 @@ import Testing from "../assets/testing.png";
 import Equipment from "../assets/equipment.png";
 import Design from "../assets/design.png";
 import { Link } from "react-router-dom";
+<<<<<<< HEAD
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const Dashboard = ({ ThemeStyles }) => {
   const handleBackClick = () => {
     navigate("/home");
+=======
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+
+const Dashboard = ({ ThemeStyles }) => {
+  const handleBackClick = () => {
+    navigate('/home');
+>>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
   };
 
   return (
@@ -137,12 +146,21 @@ const Dashboard = ({ ThemeStyles }) => {
           </Link>
         </div>
       </Box>
+<<<<<<< HEAD
       <button
         className="text-gray-500 hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         onClick={handleBackClick}
       >
         <ArrowBackIcon /> Back
       </button>
+=======
+      <button 
+          className="bg-gray-900 text-gray-500 hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          onClick={handleBackClick}
+        >
+          <ArrowBackIcon /> Back
+        </button>
+>>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
     </div>
   );
 };

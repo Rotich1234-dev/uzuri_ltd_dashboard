@@ -174,5 +174,46 @@
       "clientCategory": "Commercial",
       "boreholeLocations": "Mukono"
     }
+<<<<<<< HEAD
+=======
+  ],
+  "invoices": [
+    {
+      "id": "2bf9",
+      "clientName": "Samuel Omoding",
+      "clientEmail": "jumaomoding@gmail.com",
+      "clientCategory": "Domestic",
+      "invoiceNumber": "1",
+      "date": "2024-05-16",
+      "services": [
+        "Symmetric Drilling",
+        "Plumbing",
+        "Pump Maintenance"
+      ],
+      "totalCostBeforeTax": 147000,
+      "taxAmount": 23520,
+      "totalCostAfterTax": 123480
+    },
+    {
+      "id": "32be",
+      "clientName": "Samuel Omoding",
+      "clientEmail": "jumaomoding@gmail.com",
+      "clientCategory": "Industrial",
+      "invoiceNumber": "3",
+      "date": "2024-05-17",
+      "drillingServices": [
+        "Core Drilling"
+      ],
+      "pumpTypes": [
+        "Solar Pump"
+      ],
+      "otherServices": [
+        "Plumbing"
+      ],
+      "totalCostBeforeTax": 370000,
+      "taxAmount": 59200,
+      "totalCostAfterTax": 310800
+    }
+>>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
   ]
 }

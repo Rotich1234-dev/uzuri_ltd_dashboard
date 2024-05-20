@@ -1,22 +1,29 @@
-import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
+import { Sidebar, Menu, MenuItem } from "react-pro-sidebar"
+import MenuIcon from '@mui/icons-material/Menu';
+import { useState } from "react"
 import { Box, IconButton } from "@mui/material";
+<<<<<<< HEAD
 import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import { useUser } from "../UserContext";
+=======
+import { Link } from "react-router-dom"
+import HomeIcon from '@mui/icons-material/Home';
+import { useUser } from '../UserContext';
+>>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
 
 const Item = ({ title, to, icon }) => {
   return (
     <Link to={to}>
-      <MenuItem style={{ color: "rgb(200,200,200)" }} icon={icon}>
-        <h4 className="bg-gray-500 text-sm" color="rgb(255,240,200)">
-          {title}
-        </h4>
+      <MenuItem
+        style={{ color: "rgb(200,200,200)" }}
+        icon={icon}
+      >
+        <h4 className="bg-gray-500 text-sm" color="rgb(255,240,200)">{title}</h4>
       </MenuItem>
     </Link>
-  );
-};
+  )
+}
 
 function SideBar({ ThemeStyles }) {
   const [isCollapsed, setCollapsed] = useState(false);
@@ -35,12 +42,9 @@ function SideBar({ ThemeStyles }) {
                 style={{ margin: "10px 0", cursor: "pointer" }}
               >
                 {!isCollapsed && (
-                  <Box className="flex justify-between p-3">
+                  <Box className='flex justify-between p-3'>
                     <h1 className="text-2xl font-bold">UZURI LIMITED</h1>
-                    <IconButton
-                      className="text-slate-200"
-                      onClick={() => setCollapsed(!isCollapsed)}
-                    >
+                    <IconButton className="text-slate-200" onClick={() => setCollapsed(!isCollapsed)}>
                       <MenuIcon />
                     </IconButton>
                   </Box>
@@ -50,25 +54,39 @@ function SideBar({ ThemeStyles }) {
             {!isCollapsed && (
               <Box>
                 <Box className="mt-3">
+<<<<<<< HEAD
                   <h1 className="text-2xl text-center text-white font-bold">
                     {user?.name || ""}
                   </h1>
                   <h5 className="text-xl font-bold text-center text-blue-900">
                     {user?.role || "Staff"}
                   </h5>
+=======
+                  <h1 className="text-2xl text-center text-white font-bold">{user?.name || ""}</h1>
+                  <h5 className="text-xl font-bold text-center text-blue-900">{user?.role || "Staff"}</h5>
+>>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
                 </Box>
               </Box>
             )}
           </Menu>
           <Menu className="bg-gray-500">
             <Box>
+<<<<<<< HEAD
               <Item icon={<HomeIcon />} title="Home" to="/Home" />
+=======
+              <Item
+                icon={<HomeIcon />}
+                title="Home"
+                to="/Home"
+              />
+>>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
             </Box>
-          </Menu>
+            </Menu>
         </Sidebar>
       </Box>
     </div>
-  );
+  )
 }
 
 export default SideBar;
+
