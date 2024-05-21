@@ -1,9 +1,10 @@
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useState } from "react";
 import { Box, IconButton } from "@mui/material";
-import { Link } from "react-router-dom";
-import HomeIcon from '@mui/icons-material/Home';
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from '../UserContext';
 
 const Item = ({ title, to, icon }) => {
@@ -18,20 +19,20 @@ const Item = ({ title, to, icon }) => {
 
 function SideBar({ toggleColor, darkTheme }) {
   const [isCollapsed, setCollapsed] = useState(false);
-  const { user } = useUser();
-  
+  const { user, setUser } = useUser();
+  const navigate = useNavigate();
+
   const ThemeStyles = {
-    backgroundColor: darkTheme ? "#16182F" : "LightGray",
+    backgroundColor: darkTheme ? "#16182F" : "rgb(209, 213, 219)",
     color: darkTheme ? "White" : "Black"
   };
-  
-  // const ThemeStyles = {
-  //   backgroundColor: darkTheme ? "rgb(31, 41, 55)" : "rgb(209, 213, 219)", 
-  //   color: darkTheme ? "rgb(255, 255, 255)" : "rgb(10, 10, 10)"
-  // };
 
   const MenuStyles = {
     backgroundColor: darkTheme ? "#16182F" : "rgb(255, 255, 255)"
+  };
+
+  const handleLogout = () => {
+    navigate("/home"); 
   };
 
   return (
@@ -75,6 +76,14 @@ function SideBar({ toggleColor, darkTheme }) {
           <Menu className="mt-4" style={MenuStyles}>
             <Box>
               <Item icon={<HomeIcon />} title="Home" to="/Home" />
+            </Box>
+          </Menu>
+          <Menu className="mt-auto" style={MenuStyles}>
+            <Box className="flex items-center justify-center py-3">
+              <IconButton onClick={handleLogout} className="text-black hover:text-gray-600">
+                <ExitToAppIcon className="text-2xl" />
+                <span className={`ml-2 ${darkTheme ? 'text-gray-400 font-bold' : 'text-black'}`}>Logout</span>
+              </IconButton>
             </Box>
           </Menu>
         </Sidebar>

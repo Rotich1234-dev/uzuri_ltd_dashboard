@@ -44,6 +44,9 @@
       "email": "bill.shadrack@gmail.com",
       "password": "uzuri2024",
       "confirmPassword": "uzuri2024"
+    },
+    {
+      "id": "efac"
     }
   ],
   "clients": [
@@ -300,6 +303,93 @@
       "tankCapacity": "15000",
       "totalCost": 23627576,
       "taxAmount": 3258976
+    },
+    {
+      "id": "cf5e",
+      "client_id": "14",
+      "clientCategory": {
+        "category": "Domestic",
+        "surveyFee": 7000,
+        "localAuthorityFee": 10000
+      },
+      "drillingServices": [
+        "Core Drilling"
+      ],
+      "pumpTypes": [
+        "Hand Pump"
+      ],
+      "pumpDepth": "500",
+      "pumpHeight": "400",
+      "pipeTypes": [
+        "ABS - Acrylonitrile Butadiene Styrene"
+      ],
+      "pipeDiameter": "20",
+      "pipeLength": "3500",
+      "numberOfOutlets": "1",
+      "otherServices": [
+        "Pump Maintenance"
+      ],
+      "tankCapacity": "",
+      "totalCost": 3763040,
+      "taxAmount": 519040
+    },
+    {
+      "id": "9258",
+      "client_id": "13",
+      "clientCategory": {
+        "category": "Industrial",
+        "surveyFee": 20000,
+        "localAuthorityFee": 50000
+      },
+      "drillingServices": [],
+      "pumpTypes": [
+        "Submersible Electric Pump"
+      ],
+      "pumpDepth": "340",
+      "pumpHeight": "400",
+      "pipeTypes": [
+        "PVC - Polyvinyl Chloride",
+        "ABS - Acrylonitrile Butadiene Styrene",
+        "Cast Iron"
+      ],
+      "pipeDiameter": "34",
+      "pipeLength": "2300",
+      "numberOfOutlets": "2",
+      "otherServices": [
+        "Pump Maintenance"
+      ],
+      "tankCapacity": "10000",
+      "totalCost": 16819420,
+      "taxAmount": 2319920
+    },
+    {
+      "id": "ab9c",
+      "client_id": "15",
+      "clientCategory": {
+        "category": "Domestic",
+        "surveyFee": 7000,
+        "localAuthorityFee": 10000
+      },
+      "drillingServices": [
+        "Symmetric Drilling"
+      ],
+      "pumpTypes": [
+        "Submersible Electric Pump"
+      ],
+      "pumpDepth": "340",
+      "pumpHeight": "200",
+      "pipeTypes": [
+        "PVC - Polyvinyl Chloride"
+      ],
+      "pipeDiameter": "34",
+      "pipeLength": "2000",
+      "numberOfOutlets": "2",
+      "otherServices": [
+        "Pump Maintenance"
+      ],
+      "tankCapacity": "",
+      "totalCost": 2101920,
+      "taxAmount": 289920
     }
   ]
 }

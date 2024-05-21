@@ -9,72 +9,10 @@ import 'jspdf-autotable';
 
 emailjs.init("_i-rvf-Vb-3NAy7sG");
 
-const drillingServices = [
-  "Symmetric Drilling",
-  "Core Drilling",
-  "Geo-technical Drilling",
-];
-
-const pumpTypes = ["Submersible Electric Pump", "Solar Pump", "Hand Pump"];
-
-const plumbingServices = [
-  "Pipe Type",
-  "Pipe Diameter",
-  "Pipe Length",
-  "Number Of Outlets",
-];
-const otherServices = ["Pump Maintenance"];
-
-const clientCategories = {
-  1: { type: "Industrial", surveyFee: 20000, localAuthorityFee: 50000 },
-  2: { type: "Commercial", surveyFee: 15000, localAuthorityFee: 30000 },
-  3: { type: "Domestic", surveyFee: 7000, localAuthorityFee: 10000 },
-};
-
-const drillingCosts = {
-  "Symmetric Drilling": 130000,
-  "Core Drilling": 225000,
-  "Geo-technical Drilling": 335000,
-};
-
-const pumpCosts = {
-  "Submersible Electric Pump": 90000,
-  "Solar Pump": 65000,
-  "Hand Pump": 30000,
-};
-
-const pipeCosts = {
-  "PVC - Polyvinyl Chloride": 1200,
-  "PEX - Cross-linked Polyethylene": 1200,
-  "ABS - Acrylonitrile Butadiene Styrene": 2000,
-  Copper: 2100,
-  "Cast Iron": 2500,
-  "Galvanized Steel": 2500,
-};
-
-const plumbingCosts = {
-  "Pipe Diameter": 200,
-  "Pipe Length": 200,
-  "Number Of Outlets": 1000,
-};
-
-const tankInstallationCostPerLiter = 1200;
-const otherCosts = {
-  "Pump Maintenance": 15000,
-};
-
-const pipeTypes = [
-  "PVC - Polyvinyl Chloride",
-  "PEX - Cross-linked Polyethylene",
-  "ABS - Acrylonitrile Butadiene Styrene",
-  "Copper",
-  "Cast Iron",
-  "Galvanized Steel",
-];
-
 const Invoice = ({ ThemeStyles }) => {
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
+  const [fees, setFees] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -182,22 +120,22 @@ const Invoice = ({ ThemeStyles }) => {
     doc.text(`Project Status: ${formik.values.projectStatus}`, 20, 70);
     doc.text(`Description: ${formik.values.description}`, 20, 80);
     doc.text(`Client ID: ${formik.values.clientId}`, 20, 90);
-    doc.text(`Client Category: ${clientCategories[formik.values.clientCategory]?.type}`, 20, 100);
-    doc.text(`Survey Fee: Ksh ${clientCategories[formik.values.clientCategory]?.surveyFee}`, 20, 110);
-    doc.text(`Local Authority Fee: Ksh ${clientCategories[formik.values.clientCategory]?.localAuthorityFee}`, 20, 120);
+    doc.text(`Client Category: ${clientCategory[formik.values.clientCategory]?.type}`, 20, 100);
+    doc.text(`Survey Fee: Ksh ${clientCategory[formik.values.clientCategory]?.surveyFee}`, 20, 110);
+    doc.text(`Local Authority Fee: Ksh ${clientCategory[formik.values.clientCategory]?.localAuthorityFee}`, 20, 120);
 
     doc.autoTable({
       startY: 130,
       head: [['Service', 'Cost']],
       body: [
-        ...formik.values.drillingServices.map((service) => [service, `Ksh ${drillingCosts[service]}`]),
-        ...formik.values.pumpTypes.map((pump) => [pump, `Ksh ${pumpCosts[pump]}`]),
-        ['Pipe Type', `Ksh ${pipeCosts[formik.values.pipeType]}`],
-        ['Pipe Diameter', `Ksh ${formik.values.pipeDiameter * plumbingCosts["Pipe Diameter"]}`],
-        ['Pipe Length', `Ksh ${formik.values.pipeLength * plumbingCosts["Pipe Length"]}`],
-        ['Number Of Outlets', `Ksh ${formik.values.numberOfOutlets * plumbingCosts["Number Of Outlets"]}`],
-        ['Tank Capacity', `Ksh ${formik.values.tankCapacity * tankInstallationCostPerLiter}`],
-        ...formik.values.otherServices.map((service) => [service, `Ksh ${otherCosts[service]}`]),
+        ...formik.values.drillingServices.map((service) => [service, `Ksh ${fees[service]}`]),
+        ...formik.values.pumpTypes.map((pump) => [pump, `Ksh ${fees[pump]}`]),
+        ['Pipe Type', `Ksh ${fees[formik.values.pipeType]}`],
+        ['Pipe Diameter', `Ksh ${formik.values.pipeDiameter * fees["Pipe Diameter"]}`],
+        ['Pipe Length', `Ksh ${formik.values.pipeLength * fees["Pipe Length"]}`],
+        ['Number Of Outlets', `Ksh ${formik.values.numberOfOutlets * fees["Number Of Outlets"]}`],
+        ['Tank Capacity', `Ksh ${formik.values.tankCapacity * fees["Tank Capacity"]}`],
+        ...formik.values.otherServices.map((service) => [service, `Ksh ${fees[service]}`]),
       ],
     });
 
@@ -218,14 +156,14 @@ const Invoice = ({ ThemeStyles }) => {
       invoice_number: formik.values.invoiceNumber,
       invoice_date: formik.values.date,
       services: [
-        ...formik.values.drillingServices.map((service) => `${service}: Ksh ${drillingCosts[service]}`),
-        ...formik.values.pumpTypes.map((pump) => `${pump}: Ksh ${pumpCosts[pump]}`),
-        `Pipe Type (${formik.values.pipeType}): Ksh ${pipeCosts[formik.values.pipeType]}`,
-        `Pipe Diameter (${formik.values.pipeDiameter} inches): Ksh ${formik.values.pipeDiameter * plumbingCosts["Pipe Diameter"]}`,
-        `Pipe Length (${formik.values.pipeLength} mm): Ksh ${formik.values.pipeLength * plumbingCosts["Pipe Length"]}`,
-        `Number Of Outlets (${formik.values.numberOfOutlets}): Ksh ${formik.values.numberOfOutlets * plumbingCosts["Number Of Outlets"]}`,
-        `Tank Capacity (${formik.values.tankCapacity} liters): Ksh ${formik.values.tankCapacity * tankInstallationCostPerLiter}`,
-        ...formik.values.otherServices.map((service) => `${service}: Ksh ${otherCosts[service]}`),
+        ...formik.values.drillingServices.map((service) => `${service}: Ksh ${fees[service]}`),
+        ...formik.values.pumpTypes.map((pump) => `${pump}: Ksh ${fees[pump]}`),
+        `Pipe Type (${formik.values.pipeType}): Ksh ${fees[formik.values.pipeType]}`,
+        `Pipe Diameter (${formik.values.pipeDiameter} inches): Ksh ${formik.values.pipeDiameter * fees["Pipe Diameter"]}`,
+        `Pipe Length (${formik.values.pipeLength} mm): Ksh ${formik.values.pipeLength * fees["Pipe Length"]}`,
+        `Number Of Outlets (${formik.values.numberOfOutlets}): Ksh ${formik.values.numberOfOutlets * fees["Number Of Outlets"]}`,
+        `Tank Capacity (${formik.values.tankCapacity} liters): Ksh ${formik.values.tankCapacity * fees["Tank Capacity"]}`,
+        ...formik.values.otherServices.map((service) => `${service}: Ksh ${fees[service]}`),
         `Total Cost Before Tax: Ksh ${formik.values.totalCostBeforeTax}`,
         `Tax Amount (16%): Ksh ${formik.values.taxAmount}`,
         `Total Cost After Tax: Ksh ${formik.values.totalCostAfterTax}`
@@ -279,44 +217,60 @@ const Invoice = ({ ThemeStyles }) => {
         setError(error.toString());
         setLoading(false);
       });
+      // fetch("http://localhost:3000/fees")
+    fetch("http://127.0.0.1:8080/api/admin/routes/services")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setFees(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching fees:", error);
+      });
   }, []);
 
   useEffect(() => {
     const calculateTotalCost = () => {
-      const clientCategory = clientCategories[formik.values.clientCategory];
+      const clientCategory = clients.find(
+        (client) => client.client_id === formik.values.clientId
+      );
       const surveyFee = clientCategory?.surveyFee || 0;
       const localAuthorityFee = clientCategory?.localAuthorityFee || 0;
 
       let serviceCost = 0;
       formik.values.drillingServices.forEach((service) => {
-        if (drillingCosts[service]) {
-          serviceCost += drillingCosts[service];
+        if (fees[service]) {
+          serviceCost += fees[service];
         }
       });
       formik.values.pumpTypes.forEach((service) => {
-        if (pumpCosts[service]) {
-          serviceCost += pumpCosts[service];
+        if (fees[service]) {
+          serviceCost += fees[service];
         }
       });
       formik.values.plumbingServices.forEach((service) => {
-        if (plumbingCosts[service]) {
-          serviceCost += plumbingCosts[service];
+        if (fees[service]) {
+          serviceCost += fees[service];
         }
       });
-      if (pipeCosts[formik.values.pipeType]) {
-        serviceCost += pipeCosts[formik.values.pipeType];
+      if (fees[formik.values.pipeType]) {
+        serviceCost += fees[formik.values.pipeType];
       }
       serviceCost +=
-        formik.values.pipeDiameter * plumbingCosts["Pipe Diameter"];
-      serviceCost += formik.values.pipeLength * plumbingCosts["Pipe Length"];
+        formik.values.pipeDiameter * fees["Pipe Diameter"];
+      serviceCost += formik.values.pipeLength * fees["Pipe Length"];
       serviceCost +=
-        formik.values.numberOfOutlets * plumbingCosts["Number Of Outlets"];
+        formik.values.numberOfOutlets * fees["Number Of Outlets"];
       serviceCost +=
-        formik.values.tankCapacity * tankInstallationCostPerLiter;
+        formik.values.tankCapacity * fees["Tank Capacity"];
 
       formik.values.otherServices.forEach((service) => {
-        if (otherCosts[service]) {
-          serviceCost += otherCosts[service];
+        if (fees[service]) {
+          serviceCost += fees[service];
         }
       });
 
@@ -344,6 +298,7 @@ const Invoice = ({ ThemeStyles }) => {
     formik.values.pipeLength,
     formik.values.numberOfOutlets,
     formik.values.tankCapacity,
+    fees
   ]);
 
   const background = {
@@ -595,7 +550,7 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select service" />
-                  {drillingServices.map((drillingService, index) => (
+                  {Object.keys(fees).filter(key => key.includes("Drilling")).map((drillingService, index) => (
                     <option key={index} value={drillingService}>
                       {drillingService}
                     </option>
@@ -661,7 +616,7 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select pump type" />
-                  {pumpTypes.map((pumpType, index) => (
+                  {Object.keys(fees).filter(key => key.includes("Pump")).map((pumpType, index) => (
                     <option key={index} value={pumpType}>
                       {pumpType}
                     </option>
@@ -726,7 +681,7 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select service" />
-                  {plumbingServices.map((plumbingService, index) => (
+                  {Object.keys(fees).filter(key => key.includes("Pipe") || key.includes("Outlet")).map((plumbingService, index) => (
                     <option key={index} value={plumbingService}>
                       {plumbingService}
                     </option>
@@ -781,7 +736,7 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select pipe type" />
-                  {pipeTypes.map((pipeType, index) => (
+                  {Object.keys(fees).filter(key => key.includes("Pipe Type")).map((pipeType, index) => (
                     <option key={index} value={pipeType}>
                       {pipeType}
                     </option>
@@ -917,7 +872,7 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select service" />
-                  {otherServices.map((otherService, index) => (
+                  {Object.keys(fees).filter(key => key.includes("Service") || key.includes("Maintenance")).map((otherService, index) => (
                     <option key={index} value={otherService}>
                       {otherService}
                     </option>
@@ -1051,24 +1006,24 @@ const Invoice = ({ ThemeStyles }) => {
             <p><strong>Project Status:</strong> {formik.values.projectStatus}</p>
             <p><strong>Description:</strong> {formik.values.description}</p>
             <p><strong>Client ID:</strong> {formik.values.clientId}</p>
-            <p><strong>Client Category:</strong> {clientCategories[formik.values.clientCategory]?.type}</p>
-            <p><strong>Survey Fee:</strong> Ksh {clientCategories[formik.values.clientCategory]?.surveyFee}</p>
-            <p><strong>Local Authority Fee:</strong> Ksh {clientCategories[formik.values.clientCategory]?.localAuthorityFee}</p>
+            <p><strong>Client Category:</strong> {clientCategory[formik.values.clientCategory]?.category_id}</p>
+            <p><strong>Survey Fee:</strong> Ksh {clientCategory[formik.values.clientCategory]?.surveyFee}</p>
+            <p><strong>Local Authority Fee:</strong> Ksh {clientCategory[formik.values.clientCategory]?.localAuthorityFee}</p>
             <h3 className="text-xl font-semibold mb-2">Cost Breakdown</h3>
             <ul className="mb-4">
               {formik.values.drillingServices.map((service, index) => (
-                <li key={index}>{service}: Ksh {drillingCosts[service]}</li>
+                <li key={index}>{service}: Ksh {fees[service]}</li>
               ))}
               {formik.values.pumpTypes.map((pump, index) => (
-                <li key={index}>{pump}: Ksh {pumpCosts[pump]}</li>
+                <li key={index}>{pump}: Ksh {fees[pump]}</li>
               ))}
-              <li>Pipe Type ({formik.values.pipeType}): Ksh {pipeCosts[formik.values.pipeType]}</li>
-              <li>Pipe Diameter ({formik.values.pipeDiameter} inches): Ksh {formik.values.pipeDiameter * plumbingCosts["Pipe Diameter"]}</li>
-              <li>Pipe Length ({formik.values.pipeLength} mm): Ksh {formik.values.pipeLength * plumbingCosts["Pipe Length"]}</li>
-              <li>Number Of Outlets ({formik.values.numberOfOutlets}): Ksh {formik.values.numberOfOutlets * plumbingCosts["Number Of Outlets"]}</li>
-              <li>Tank Capacity ({formik.values.tankCapacity} liters): Ksh {formik.values.tankCapacity * tankInstallationCostPerLiter}</li>
+              <li>Pipe Type ({formik.values.pipeType}): Ksh {fees[formik.values.pipeType]}</li>
+              <li>Pipe Diameter ({formik.values.pipeDiameter} inches): Ksh {formik.values.pipeDiameter * fees["Pipe Diameter"]}</li>
+              <li>Pipe Length ({formik.values.pipeLength} mm): Ksh {formik.values.pipeLength * fees["Pipe Length"]}</li>
+              <li>Number Of Outlets ({formik.values.numberOfOutlets}): Ksh {formik.values.numberOfOutlets * fees["Number Of Outlets"]}</li>
+              <li>Tank Capacity ({formik.values.tankCapacity} liters): Ksh {formik.values.tankCapacity * fees["Tank Capacity"]}</li>
               {formik.values.otherServices.map((service, index) => (
-                <li key={index}>{service}: Ksh {otherCosts[service]}</li>
+                <li key={index}>{service}: Ksh {fees[service]}</li>
               ))}
             </ul>
             <p><strong>Total Cost Before Tax:</strong> Ksh {formik.values.totalCostBeforeTax}</p>
@@ -1088,6 +1043,5 @@ const Invoice = ({ ThemeStyles }) => {
 };
 
 export default Invoice;
-
 
 
