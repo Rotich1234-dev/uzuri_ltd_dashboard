@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com";
@@ -17,96 +15,107 @@ const Invoice = ({ ThemeStyles }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
-
-  const validationSchema = Yup.object({
-    clientId: Yup.string().required("Required"),
-    clientName: Yup.string().required("Required"),
-    clientEmail: Yup.string()
-      .email("Invalid email address")
-      .required("Required"),
-    clientCategory: Yup.string().required("Required"),
-    invoiceNumber: Yup.string().required("Required"),
-    date: Yup.date().required("Required"),
-    projectStatus: Yup.string().required("Required"),
-    drillingServices: Yup.array()
-      .min(1, "At least one service is required")
-      .required("Required"),
-    pumpTypes: Yup.array()
-      .min(1, "At least one service is required")
-      .required("Required"),
-    plumbingServices: Yup.array(),
-    pipeType: Yup.string().required("Required"),
-    pipeDiameter: Yup.number()
-      .min(0.5, "Minimum value is 0.5 inches")
-      .max(48, "Maximum value is 48 inches")
-      .required("Required"),
-    pipeLength: Yup.number()
-      .min(1, "Minimum value is 1 mm")
-      .required("Required"),
-    numberOfOutlets: Yup.number()
-      .min(1, "Minimum value is 1")
-      .required("Required"),
-    tankCapacity: Yup.number().required("Required"),
-    otherServices: Yup.array()
-      .min(1, "At least one service is required")
-      .required("Required"),
-    totalCostBeforeTax: Yup.number().required("Required"),
-    taxAmount: Yup.number().required("Required"),
-    totalCostAfterTax: Yup.number().required("Required"),
+  const [formValues, setFormValues] = useState({
+    clientId: "",
+    clientName: "",
+    clientEmail: "",
+    clientCategory: "",
+    invoiceNumber: "",
+    date: "",
+    projectStatus: "",
+    drillingServices: [],
+    pumpTypes: [],
+    plumbingServices: [],
+    pipeType: "",
+    pipeDiameter: "",
+    pipeLength: "",
+    numberOfOutlets: "",
+    tankCapacity: "",
+    otherServices: [],
+    totalCostBeforeTax: 0,
+    taxAmount: 0,
+    totalCostAfterTax: 0,
   });
 
-  const formik = useFormik({
-    initialValues: {
-      clientId: "",
-      clientName: "",
-      clientEmail: "",
-      clientCategory: "",
-      invoiceNumber: "",
-      date: "",
-      projectStatus: "",
-      drillingServices: [],
-      pumpTypes: [],
-      plumbingServices: [],
-      pipeType: "",
-      pipeDiameter: "",
-      pipeLength: "",
-      numberOfOutlets: "",
-      tankCapacity: "",
-      otherServices: [],
-      totalCostBeforeTax: 0,
-      taxAmount: 0,
-      totalCostAfterTax: 0,
-    },
-    validationSchema: validationSchema,
-    onSubmit: (values, { setSubmitting, resetForm }) => {
-      console.log(values);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
 
-      fetch("http://localhost:3000/invoices", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setSubmitting(false);
-          setSuccessMessage("Invoice created successfully!");
-          resetForm();
-          setTimeout(() => {
-            setSuccessMessage("");
-          }, 3000);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          setSubmitting(false);
-        });
-    },
-  });
+  const handleSelectChange = (e, field) => {
+    const { value } = e.target;
+    if (value && !formValues[field].includes(value)) {
+      setFormValues({ ...formValues, [field]: [...formValues[field], value] });
+    }
+  };
+
+  const handleRemoveService = (field, index) => {
+    setFormValues({
+      ...formValues,
+      [field]: formValues[field].filter((_, i) => i !== index),
+    });
+  };
 
   const handleBackClick = () => {
     navigate("/dashboard");
+  };
+
+
+  const handleClientChange = (e) => {
+    const selectedClientId = e.target.value;
+    const selectedClient = clients.find(client => client.client_id === selectedClientId);
+    if (selectedClient) {
+      setFormValues({
+        ...formValues,
+        clientId: selectedClient.client_id,
+        clientEmail: selectedClient.email,
+        clientName: `${selectedClient.firstName} ${selectedClient.lastName}`,
+        clientCategory: selectedClient.category_id,
+      });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    fetch("http://localhost:3000/invoices", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formValues),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setSuccessMessage("Invoice created successfully!");
+        setFormValues({
+          clientId: "",
+          clientName: "",
+          clientEmail: "",
+          clientCategory: "",
+          invoiceNumber: "",
+          date: "",
+          projectStatus: "",
+          drillingServices: [],
+          pumpTypes: [],
+          plumbingServices: [],
+          pipeType: "",
+          pipeDiameter: "",
+          pipeLength: "",
+          numberOfOutlets: "",
+          tankCapacity: "",
+          otherServices: [],
+          totalCostBeforeTax: 0,
+          taxAmount: 0,
+          totalCostAfterTax: 0,
+        });
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 3000);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const generatePDF = () => {
@@ -114,34 +123,34 @@ const Invoice = ({ ThemeStyles }) => {
 
     doc.text("Invoice", 20, 20);
     doc.text(`From: Uzuri Limited Accounts Department`, 20, 30);
-    doc.text(`To: ${formik.values.clientName} (${formik.values.clientEmail})`, 20, 40);
-    doc.text(`Invoice #: ${formik.values.invoiceNumber}`, 20, 50);
-    doc.text(`Date: ${formik.values.date}`, 20, 60);
-    doc.text(`Project Status: ${formik.values.projectStatus}`, 20, 70);
-    doc.text(`Description: ${formik.values.description}`, 20, 80);
-    doc.text(`Client ID: ${formik.values.clientId}`, 20, 90);
-    doc.text(`Client Category: ${clientCategory[formik.values.clientCategory]?.type}`, 20, 100);
-    doc.text(`Survey Fee: Ksh ${clientCategory[formik.values.clientCategory]?.surveyFee}`, 20, 110);
-    doc.text(`Local Authority Fee: Ksh ${clientCategory[formik.values.clientCategory]?.localAuthorityFee}`, 20, 120);
+    doc.text(`To: ${formValues.clientName} (${formValues.clientEmail})`, 20, 40);
+    doc.text(`Invoice #: ${formValues.invoiceNumber}`, 20, 50);
+    doc.text(`Date: ${formValues.date}`, 20, 60);
+    doc.text(`Project Status: ${formValues.projectStatus}`, 20, 70);
+    doc.text(`Description: ${formValues.description}`, 20, 80);
+    doc.text(`Client ID: ${formValues.clientId}`, 20, 90);
+    doc.text(`Client Category: ${formValues.clientCategory}`, 20, 100);
+    doc.text(`Survey Fee: Ksh ${formValues.surveyFee}`, 20, 110);
+    doc.text(`Local Authority Fee: Ksh ${formValues.localAuthorityFee}`, 20, 120);
 
     doc.autoTable({
       startY: 130,
       head: [['Service', 'Cost']],
       body: [
-        ...formik.values.drillingServices.map((service) => [service, `Ksh ${fees[service]}`]),
-        ...formik.values.pumpTypes.map((pump) => [pump, `Ksh ${fees[pump]}`]),
-        ['Pipe Type', `Ksh ${fees[formik.values.pipeType]}`],
-        ['Pipe Diameter', `Ksh ${formik.values.pipeDiameter * fees["Pipe Diameter"]}`],
-        ['Pipe Length', `Ksh ${formik.values.pipeLength * fees["Pipe Length"]}`],
-        ['Number Of Outlets', `Ksh ${formik.values.numberOfOutlets * fees["Number Of Outlets"]}`],
-        ['Tank Capacity', `Ksh ${formik.values.tankCapacity * fees["Tank Capacity"]}`],
-        ...formik.values.otherServices.map((service) => [service, `Ksh ${fees[service]}`]),
+        ...formValues.drillingServices.map((service) => [service, `Ksh ${fees[service]}`]),
+        ...formValues.pumpTypes.map((pump) => [pump, `Ksh ${fees[pump]}`]),
+        ['Pipe Type', `Ksh ${fees[formValues.pipeType]}`],
+        ['Pipe Diameter', `Ksh ${formValues.pipeDiameter * fees["Pipe Diameter"]}`],
+        ['Pipe Length', `Ksh ${formValues.pipeLength * fees["Pipe Length"]}`],
+        ['Number Of Outlets', `Ksh ${formValues.numberOfOutlets * fees["Number Of Outlets"]}`],
+        ['Tank Capacity', `Ksh ${formValues.tankCapacity * fees["Tank Capacity"]}`],
+        ...formValues.otherServices.map((service) => [service, `Ksh ${fees[service]}`]),
       ],
     });
 
-    doc.text(`Total Cost Before Tax: Ksh ${formik.values.totalCostBeforeTax}`, 20, doc.autoTable.previous.finalY + 10);
-    doc.text(`Tax Amount (16%): Ksh ${formik.values.taxAmount}`, 20, doc.autoTable.previous.finalY + 20);
-    doc.text(`Total Cost After Tax: Ksh ${formik.values.totalCostAfterTax}`, 20, doc.autoTable.previous.finalY + 30);
+    doc.text(`Total Cost Before Tax: Ksh ${formValues.totalCostBeforeTax}`, 20, doc.autoTable.previous.finalY + 10);
+    doc.text(`Tax Amount (16%): Ksh ${formValues.taxAmount}`, 20, doc.autoTable.previous.finalY + 20);
+    doc.text(`Total Cost After Tax: Ksh ${formValues.totalCostAfterTax}`, 20, doc.autoTable.previous.finalY + 30);
 
     return doc;
   };
@@ -151,22 +160,22 @@ const Invoice = ({ ThemeStyles }) => {
     const pdfBase64 = doc.output('datauristring');
 
     const templateParams = {
-      to_email: formik.values.clientEmail,
-      to_name: formik.values.clientName,
-      invoice_number: formik.values.invoiceNumber,
-      invoice_date: formik.values.date,
+      to_email: formValues.clientEmail,
+      to_name: formValues.clientName,
+      invoice_number: formValues.invoiceNumber,
+      invoice_date: formValues.date,
       services: [
-        ...formik.values.drillingServices.map((service) => `${service}: Ksh ${fees[service]}`),
-        ...formik.values.pumpTypes.map((pump) => `${pump}: Ksh ${fees[pump]}`),
-        `Pipe Type (${formik.values.pipeType}): Ksh ${fees[formik.values.pipeType]}`,
-        `Pipe Diameter (${formik.values.pipeDiameter} inches): Ksh ${formik.values.pipeDiameter * fees["Pipe Diameter"]}`,
-        `Pipe Length (${formik.values.pipeLength} mm): Ksh ${formik.values.pipeLength * fees["Pipe Length"]}`,
-        `Number Of Outlets (${formik.values.numberOfOutlets}): Ksh ${formik.values.numberOfOutlets * fees["Number Of Outlets"]}`,
-        `Tank Capacity (${formik.values.tankCapacity} liters): Ksh ${formik.values.tankCapacity * fees["Tank Capacity"]}`,
-        ...formik.values.otherServices.map((service) => `${service}: Ksh ${fees[service]}`),
-        `Total Cost Before Tax: Ksh ${formik.values.totalCostBeforeTax}`,
-        `Tax Amount (16%): Ksh ${formik.values.taxAmount}`,
-        `Total Cost After Tax: Ksh ${formik.values.totalCostAfterTax}`
+        ...formValues.drillingServices.map((service) => `${service}: Ksh ${fees[service]}`),
+        ...formValues.pumpTypes.map((pump) => `${pump}: Ksh ${fees[pump]}`),
+        `Pipe Type (${formValues.pipeType}): Ksh ${fees[formValues.pipeType]}`,
+        `Pipe Diameter (${formValues.pipeDiameter} inches): Ksh ${formValues.pipeDiameter * fees["Pipe Diameter"]}`,
+        `Pipe Length (${formValues.pipeLength} mm): Ksh ${formValues.pipeLength * fees["Pipe Length"]}`,
+        `Number Of Outlets (${formValues.numberOfOutlets}): Ksh ${formValues.numberOfOutlets * fees["Number Of Outlets"]}`,
+        `Tank Capacity (${formValues.tankCapacity} liters): Ksh ${formValues.tankCapacity * fees["Tank Capacity"]}`,
+        ...formValues.otherServices.map((service) => `${service}: Ksh ${fees[service]}`),
+        `Total Cost Before Tax: Ksh ${formValues.totalCostBeforeTax}`,
+        `Tax Amount (16%): Ksh ${formValues.taxAmount}`,
+        `Total Cost After Tax: Ksh ${formValues.totalCostAfterTax}`
       ].join('\n'),
       pdf_base64: pdfBase64,
     };
@@ -194,7 +203,27 @@ const Invoice = ({ ThemeStyles }) => {
   };
 
   const handleReset = () => {
-    formik.resetForm();
+    setFormValues({
+      clientId: "",
+      clientName: "",
+      clientEmail: "",
+      clientCategory: "",
+      invoiceNumber: "",
+      date: "",
+      projectStatus: "",
+      drillingServices: [],
+      pumpTypes: [],
+      plumbingServices: [],
+      pipeType: "",
+      pipeDiameter: "",
+      pipeLength: "",
+      numberOfOutlets: "",
+      tankCapacity: "",
+      otherServices: [],
+      totalCostBeforeTax: 0,
+      taxAmount: 0,
+      totalCostAfterTax: 0,
+    });
   };
 
   const handlePreview = () => {
@@ -217,8 +246,8 @@ const Invoice = ({ ThemeStyles }) => {
         setError(error.toString());
         setLoading(false);
       });
-      // fetch("http://localhost:3000/fees")
-    fetch("http://127.0.0.1:8080/api/admin/routes/services")
+
+    fetch("http://127.0.0.1:8080/api/admin/routes/fees")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -235,40 +264,35 @@ const Invoice = ({ ThemeStyles }) => {
 
   useEffect(() => {
     const calculateTotalCost = () => {
-      const clientCategory = clients.find(
-        (client) => client.client_id === formik.values.clientId
-      );
+      const clientCategory = clients.find(client => client.client_id === formValues.clientId);
       const surveyFee = clientCategory?.surveyFee || 0;
       const localAuthorityFee = clientCategory?.localAuthorityFee || 0;
 
       let serviceCost = 0;
-      formik.values.drillingServices.forEach((service) => {
+      formValues.drillingServices.forEach(service => {
         if (fees[service]) {
           serviceCost += fees[service];
         }
       });
-      formik.values.pumpTypes.forEach((service) => {
+      formValues.pumpTypes.forEach(service => {
         if (fees[service]) {
           serviceCost += fees[service];
         }
       });
-      formik.values.plumbingServices.forEach((service) => {
+      formValues.plumbingServices.forEach(service => {
         if (fees[service]) {
           serviceCost += fees[service];
         }
       });
-      if (fees[formik.values.pipeType]) {
-        serviceCost += fees[formik.values.pipeType];
+      if (fees[formValues.pipeType]) {
+        serviceCost += fees[formValues.pipeType];
       }
-      serviceCost +=
-        formik.values.pipeDiameter * fees["Pipe Diameter"];
-      serviceCost += formik.values.pipeLength * fees["Pipe Length"];
-      serviceCost +=
-        formik.values.numberOfOutlets * fees["Number Of Outlets"];
-      serviceCost +=
-        formik.values.tankCapacity * fees["Tank Capacity"];
+      serviceCost += formValues.pipeDiameter * fees["Pipe Diameter"];
+      serviceCost += formValues.pipeLength * fees["Pipe Length"];
+      serviceCost += formValues.numberOfOutlets * fees["Number Of Outlets"];
+      serviceCost += formValues.tankCapacity * fees["Tank Capacity"];
 
-      formik.values.otherServices.forEach((service) => {
+      formValues.otherServices.forEach(service => {
         if (fees[service]) {
           serviceCost += fees[service];
         }
@@ -278,8 +302,8 @@ const Invoice = ({ ThemeStyles }) => {
       const taxAmount = totalCostBeforeTax * 0.16;
       const totalCostAfterTax = totalCostBeforeTax + taxAmount;
 
-      formik.setValues({
-        ...formik.values,
+      setFormValues({
+        ...formValues,
         totalCostBeforeTax,
         taxAmount,
         totalCostAfterTax,
@@ -288,55 +312,42 @@ const Invoice = ({ ThemeStyles }) => {
 
     calculateTotalCost();
   }, [
-    formik.values.drillingServices,
-    formik.values.pumpTypes,
-    formik.values.plumbingServices,
-    formik.values.otherServices,
-    formik.values.clientCategory,
-    formik.values.pipeType,
-    formik.values.pipeDiameter,
-    formik.values.pipeLength,
-    formik.values.numberOfOutlets,
-    formik.values.tankCapacity,
-    fees
+    formValues.drillingServices,
+    formValues.pumpTypes,
+    formValues.plumbingServices,
+    formValues.otherServices,
+    formValues.clientCategory,
+    formValues.pipeType,
+    formValues.pipeDiameter,
+    formValues.pipeLength,
+    formValues.numberOfOutlets,
+    formValues.tankCapacity,
+    fees,
+    clients,
   ]);
 
   const background = {
     ...ThemeStyles,
-    backgroundColor: "#FFFAFA ",
+    backgroundColor: "#FFFAFA",
   };
 
   return (
-    <div
-      className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto"
-      style={background}
-    >
+    <div className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto" style={background}>
       <div className="max-w-4xl mx-auto bg-gray-100 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 relative">
         <div className="absolute top-0 right-0 p-4">
-          <img
-            src="src/assets/uzurilogo.png"
-            alt="Logo"
-            className="w-16 h-16 rounded-full object-cover"
-          />
+          <img src="src/assets/uzurilogo.png" alt="Logo" className="w-16 h-16 rounded-full object-cover" />
         </div>
-        <h1 className="text-gray-900 text-2xl font-bold text-center mb-6">
-          Invoice
-        </h1>
-        {successMessage && (
-          <p className="text-green-500 text-center">{successMessage}</p>
-        )}
+        <h1 className="text-gray-900 text-2xl font-bold text-center mb-6">Invoice</h1>
+        {successMessage && <p className="text-green-500 text-center">{successMessage}</p>}
         {loading ? (
           <p className="text-center">Loading...</p>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : (
-          <form onSubmit={formik.handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="from"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="from">
                   From
                 </label>
                 <textarea
@@ -348,204 +359,112 @@ const Invoice = ({ ThemeStyles }) => {
                 />
               </div>
               <div className="w-full md:w-1/2 px-3">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="clientEmail"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="clientEmail">
                   Bill To
                 </label>
                 <input
                   id="clientEmail"
                   name="clientEmail"
                   type="text"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.clientEmail}
+                  onChange={handleInputChange}
+                  value={formValues.clientEmail}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   placeholder="Your customer's billing address"
                   readOnly
                 />
-                {formik.touched.clientEmail && formik.errors.clientEmail ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.clientEmail}
-                  </p>
-                ) : null}
               </div>
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="clientId"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="clientId">
                   Client Id
                 </label>
                 <select
                   id="clientId"
                   name="clientId"
-                  onChange={(e) => {
-                    const selectedClientId = e.target.value;
-                    const selectedClient = clients.find(
-                      (client) => client.client_id == selectedClientId
-                    );
-                    if (selectedClient) {
-                      formik.setFieldValue(
-                        "clientId",
-                        selectedClient.client_id
-                      );
-                      formik.setFieldValue("clientEmail", selectedClient.email);
-                      formik.setFieldValue(
-                        "clientName",
-                        `${selectedClient.firstName} ${selectedClient.lastName}`
-                      );
-                      formik.setFieldValue(
-                        "clientCategory",
-                        selectedClient.category_id
-                      );
-                    }
-                  }}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.clientId}
+                  onChange={handleClientChange}
+                  value={formValues.clientId}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  style={{ color: "black" }}
                 >
                   <option value="" label="Select client" />
-                  {clients.map((client) => (
+                  {clients.map(client => (
                     <option key={client.client_id} value={client.client_id}>
                       {client.client_id} - {client.firstName} {client.lastName}
                     </option>
                   ))}
                 </select>
-                {formik.touched.clientId && formik.errors.clientId ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.clientId}
-                  </p>
-                ) : null}
               </div>
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="invoiceNumber"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="invoiceNumber">
                   Invoice #
                 </label>
                 <input
                   id="invoiceNumber"
                   name="invoiceNumber"
                   type="text"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.invoiceNumber}
+                  onChange={handleInputChange}
+                  value={formValues.invoiceNumber}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   placeholder="Enter Invoice Number"
                 />
-                {formik.touched.invoiceNumber && formik.errors.invoiceNumber ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.invoiceNumber}
-                  </p>
-                ) : null}
               </div>
               <div className="w-full md:w-2/4 px-3">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="date"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="date">
                   Invoice Date
                 </label>
                 <input
                   id="date"
                   name="date"
                   type="date"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.date}
+                  onChange={handleInputChange}
+                  value={formValues.date}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 />
-                {formik.touched.date && formik.errors.date ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.date}
-                  </p>
-                ) : null}
               </div>
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full px-3">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="description"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="description">
                   Description
                 </label>
                 <input
                   id="description"
                   name="description"
                   type="text"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.description}
+                  onChange={handleInputChange}
+                  value={formValues.description}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   placeholder="Description"
                 />
-                {formik.touched.description && formik.errors.description ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.description}
-                  </p>
-                ) : null}
               </div>
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="projectStatus"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="projectStatus">
                   Project Status
                 </label>
                 <select
                   id="projectStatus"
                   name="projectStatus"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.projectStatus}
+                  onChange={handleInputChange}
+                  value={formValues.projectStatus}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select status" />
                   <option value="Completed">Completed</option>
-                  <option value="Incomplete">
-                    Incomplete (Pending Downpayment)
-                  </option>
+                  <option value="Incomplete">Incomplete (Pending Downpayment)</option>
                 </select>
-                {formik.touched.projectStatus && formik.errors.projectStatus ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.projectStatus}
-                  </p>
-                ) : null}
               </div>
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="drillingServices"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="drillingServices">
                   Drilling Services
                 </label>
                 <select
                   id="drillingServices"
                   name="drillingServices"
-                  onChange={(e) => {
-                    const selectedService = e.target.value;
-                    if (
-                      selectedService &&
-                      !formik.values.drillingServices.includes(selectedService)
-                    ) {
-                      formik.setFieldValue("drillingServices", [
-                        ...formik.values.drillingServices,
-                        selectedService,
-                      ]);
-                    }
-                  }}
-                  onBlur={formik.handleBlur}
+                  onChange={(e) => handleSelectChange(e, 'drillingServices')}
                   value=""
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
@@ -556,62 +475,29 @@ const Invoice = ({ ThemeStyles }) => {
                     </option>
                   ))}
                 </select>
-                {formik.touched.drillingServices &&
-                formik.errors.drillingServices ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.drillingServices}
-                  </p>
-                ) : null}
                 <ul className="list-disc pl-5 text-gray-900 mb-4">
-                  {formik.values.drillingServices.map(
-                    (drillingService, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center justify-between"
+                  {formValues.drillingServices.map((drillingService, index) => (
+                    <li key={index} className="flex items-center justify-between">
+                      {drillingService}
+                      <button
+                        type="button"
+                        className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
+                        onClick={() => handleRemoveService('drillingServices', index)}
                       >
-                        {drillingService}
-                        <button
-                          type="button"
-                          className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                          onClick={() =>
-                            formik.setFieldValue(
-                              "drillingServices",
-                              formik.values.drillingServices.filter(
-                                (_, i) => i !== index
-                              )
-                            )
-                          }
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    )
-                  )}
+                        Remove
+                      </button>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="pumpTypes"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="pumpTypes">
                   Pump Types
                 </label>
                 <select
                   id="pumpTypes"
                   name="pumpTypes"
-                  onChange={(e) => {
-                    const selectedPump = e.target.value;
-                    if (
-                      selectedPump &&
-                      !formik.values.pumpTypes.includes(selectedPump)
-                    ) {
-                      formik.setFieldValue("pumpTypes", [
-                        ...formik.values.pumpTypes,
-                        selectedPump,
-                      ]);
-                    }
-                  }}
-                  onBlur={formik.handleBlur}
+                  onChange={(e) => handleSelectChange(e, 'pumpTypes')}
                   value=""
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
@@ -622,29 +508,14 @@ const Invoice = ({ ThemeStyles }) => {
                     </option>
                   ))}
                 </select>
-                {formik.touched.pumpTypes && formik.errors.pumpTypes ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.pumpTypes}
-                  </p>
-                ) : null}
                 <ul className="list-disc pl-5 text-gray-900 mb-4">
-                  {formik.values.pumpTypes.map((pumpType, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center justify-between"
-                    >
+                  {formValues.pumpTypes.map((pumpType, index) => (
+                    <li key={index} className="flex items-center justify-between">
                       {pumpType}
                       <button
                         type="button"
                         className="bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                        onClick={() =>
-                          formik.setFieldValue(
-                            "pumpTypes",
-                            formik.values.pumpTypes.filter(
-                              (_, i) => i !== index
-                            )
-                          )
-                        }
+                        onClick={() => handleRemoveService('pumpTypes', index)}
                       >
                         Remove
                       </button>
@@ -655,28 +526,13 @@ const Invoice = ({ ThemeStyles }) => {
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="plumbingServices"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="plumbingServices">
                   Plumbing Services
                 </label>
                 <select
                   id="plumbingServices"
                   name="plumbingServices"
-                  onChange={(e) => {
-                    const selectedService = e.target.value;
-                    if (
-                      selectedService &&
-                      !formik.values.plumbingServices.includes(selectedService)
-                    ) {
-                      formik.setFieldValue("plumbingServices", [
-                        ...formik.values.plumbingServices,
-                        selectedService,
-                      ]);
-                    }
-                  }}
-                  onBlur={formik.handleBlur}
+                  onChange={(e) => handleSelectChange(e, 'plumbingServices')}
                   value=""
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
@@ -687,52 +543,30 @@ const Invoice = ({ ThemeStyles }) => {
                     </option>
                   ))}
                 </select>
-                {formik.touched.plumbingServices &&
-                formik.errors.plumbingServices ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.plumbingServices}
-                  </p>
-                ) : null}
                 <ul className="list-disc pl-5 text-gray-900 mb-4">
-                  {formik.values.plumbingServices.map(
-                    (plumbingService, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center justify-between"
+                  {formValues.plumbingServices.map((plumbingService, index) => (
+                    <li key={index} className="flex items-center justify-between">
+                      {plumbingService}
+                      <button
+                        type="button"
+                        className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
+                        onClick={() => handleRemoveService('plumbingServices', index)}
                       >
-                        {plumbingService}
-                        <button
-                          type="button"
-                          className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                          onClick={() =>
-                            formik.setFieldValue(
-                              "plumbingServices",
-                              formik.values.plumbingServices.filter(
-                                (_, i) => i !== index
-                              )
-                            )
-                          }
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    )
-                  )}
+                        Remove
+                      </button>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="pipeType"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="pipeType">
                   Pipe Type
                 </label>
                 <select
                   id="pipeType"
                   name="pipeType"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.pipeType}
+                  onChange={handleInputChange}
+                  value={formValues.pipeType}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select pipe type" />
@@ -742,132 +576,75 @@ const Invoice = ({ ThemeStyles }) => {
                     </option>
                   ))}
                 </select>
-                {formik.touched.pipeType && formik.errors.pipeType ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.pipeType}
-                  </p>
-                ) : null}
               </div>
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="pipeDiameter"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="pipeDiameter">
                   Pipe Diameter (inches)
                 </label>
                 <input
                   id="pipeDiameter"
                   name="pipeDiameter"
                   type="number"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.pipeDiameter}
+                  onChange={handleInputChange}
+                  value={formValues.pipeDiameter}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   placeholder="Enter value between 0.5 to 48"
                 />
-                {formik.touched.pipeDiameter && formik.errors.pipeDiameter ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.pipeDiameter}
-                  </p>
-                ) : null}
               </div>
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="pipeLength"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="pipeLength">
                   Pipe Length (mm)
                 </label>
                 <input
                   id="pipeLength"
                   name="pipeLength"
                   type="number"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.pipeLength}
+                  onChange={handleInputChange}
+                  value={formValues.pipeLength}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   placeholder="Enter value from 1"
                 />
-                {formik.touched.pipeLength && formik.errors.pipeLength ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.pipeLength}
-                  </p>
-                ) : null}
               </div>
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="numberOfOutlets"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="numberOfOutlets">
                   Number Of Outlets
                 </label>
                 <input
                   id="numberOfOutlets"
                   name="numberOfOutlets"
                   type="number"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.numberOfOutlets}
+                  onChange={handleInputChange}
+                  value={formValues.numberOfOutlets}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   placeholder="Enter number from 1"
                 />
-                {formik.touched.numberOfOutlets &&
-                formik.errors.numberOfOutlets ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.numberOfOutlets}
-                  </p>
-                ) : null}
               </div>
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="tankCapacity"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="tankCapacity">
                   Tank Capacity (liters)
                 </label>
                 <input
                   id="tankCapacity"
                   name="tankCapacity"
                   type="number"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.tankCapacity}
+                  onChange={handleInputChange}
+                  value={formValues.tankCapacity}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   placeholder="Enter value from 1"
                 />
-                {formik.touched.tankCapacity && formik.errors.tankCapacity ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.tankCapacity}
-                  </p>
-                ) : null}
               </div>
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full px-3">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="otherServices"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="otherServices">
                   Other Services
                 </label>
                 <select
                   id="otherServices"
                   name="otherServices"
-                  onChange={(e) => {
-                    const selectedService = e.target.value;
-                    if (
-                      selectedService &&
-                      !formik.values.otherServices.includes(selectedService)
-                    ) {
-                      formik.setFieldValue("otherServices", [
-                        ...formik.values.otherServices,
-                        selectedService,
-                      ]);
-                    }
-                  }}
-                  onBlur={formik.handleBlur}
+                  onChange={(e) => handleSelectChange(e, 'otherServices')}
                   value=""
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
@@ -878,29 +655,14 @@ const Invoice = ({ ThemeStyles }) => {
                     </option>
                   ))}
                 </select>
-                {formik.touched.otherServices && formik.errors.otherServices ? (
-                  <p className="text-red-500 text-xs italic">
-                    {formik.errors.otherServices}
-                  </p>
-                ) : null}
                 <ul className="list-disc pl-5 text-gray-900 mb-4">
-                  {formik.values.otherServices.map((otherService, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center justify-between"
-                    >
+                  {formValues.otherServices.map((otherService, index) => (
+                    <li key={index} className="flex items-center justify-between">
                       {otherService}
                       <button
                         type="button"
                         className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                        onClick={() =>
-                          formik.setFieldValue(
-                            "otherServices",
-                            formik.values.otherServices.filter(
-                              (_, i) => i !== index
-                            )
-                          )
-                        }
+                        onClick={() => handleRemoveService('otherServices', index)}
                       >
                         Remove
                       </button>
@@ -912,32 +674,19 @@ const Invoice = ({ ThemeStyles }) => {
             <div className="justify-center flex flex-row gap-9 mt-3 mb-6">
               <div className="flex flex-col items-start">
                 <h2 className="text-xl font-semibold text-gray-900">Amount</h2>
-                <p className="bg-gray-300 text-lg text-gray-900">
-                  Ksh {formik.values.totalCostBeforeTax}
-                </p>
+                <p className="bg-gray-300 text-lg text-gray-900">Ksh {formValues.totalCostBeforeTax}</p>
               </div>
               <div className="flex flex-col items-start">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Tax (16%)
-                </h2>
-                <p className="bg-gray-300 text-lg text-gray-900">
-                  Ksh {formik.values.taxAmount}
-                </p>
+                <h2 className="text-xl font-semibold text-gray-900">Tax (16%)</h2>
+                <p className="bg-gray-300 text-lg text-gray-900">Ksh {formValues.taxAmount}</p>
               </div>
               <div className="flex flex-col items-start">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  TOTAL KES
-                </h2>
-                <p className="bg-gray-300 text-2xl text-gray-900">
-                  Ksh {formik.values.totalCostAfterTax}
-                </p>
+                <h2 className="text-xl font-semibold text-gray-900">TOTAL KES</h2>
+                <p className="bg-gray-300 text-2xl text-gray-900">Ksh {formValues.totalCostAfterTax}</p>
               </div>
             </div>
             <div className="mb-6">
-              <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                htmlFor="terms"
-              >
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="terms">
                 Terms & Conditions
               </label>
               <textarea
@@ -956,32 +705,16 @@ const Invoice = ({ ThemeStyles }) => {
               </button>
             </div>
             <div className="flex justify-between mb-6">
-              <button
-                type="submit"
-                className="bg-green-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-green-700"
-                disabled={formik.isSubmitting}
-              >
-                {formik.isSubmitting ? "Creating..." : "Save Invoice"}
+              <button type="submit" className="bg-green-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-green-700">
+                Save Invoice
               </button>
-              <button
-                type="button"
-                className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-700"
-                onClick={handlePreview}
-              >
+              <button type="button" className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-700" onClick={handlePreview}>
                 Preview Invoice
               </button>
-              <button
-                type="button"
-                className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-700"
-                onClick={handleSendEmail}
-              >
+              <button type="button" className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-700" onClick={handleSendEmail}>
                 Send Email
               </button>
-              <button
-                type="button"
-                className="bg-yellow-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-yellow-700"
-                onClick={handleReset}
-              >
+              <button type="button" className="bg-yellow-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-yellow-700" onClick={handleReset}>
                 Reset
               </button>
             </div>
@@ -1000,35 +733,35 @@ const Invoice = ({ ThemeStyles }) => {
           <div className="bg-gray-600 p-8 rounded shadow-md max-w-lg w-full">
             <h2 className="text-2xl font-bold mb-4">Invoice Preview</h2>
             <p><strong>From:</strong> Uzuri Limited Accounts Department</p>
-            <p><strong>To:</strong> {formik.values.clientName} ({formik.values.clientEmail})</p>
-            <p><strong>Invoice #:</strong> {formik.values.invoiceNumber}</p>
-            <p><strong>Date:</strong> {formik.values.date}</p>
-            <p><strong>Project Status:</strong> {formik.values.projectStatus}</p>
-            <p><strong>Description:</strong> {formik.values.description}</p>
-            <p><strong>Client ID:</strong> {formik.values.clientId}</p>
-            <p><strong>Client Category:</strong> {clientCategory[formik.values.clientCategory]?.category_id}</p>
-            <p><strong>Survey Fee:</strong> Ksh {clientCategory[formik.values.clientCategory]?.surveyFee}</p>
-            <p><strong>Local Authority Fee:</strong> Ksh {clientCategory[formik.values.clientCategory]?.localAuthorityFee}</p>
+            <p><strong>To:</strong> {formValues.clientName} ({formValues.clientEmail})</p>
+            <p><strong>Invoice #:</strong> {formValues.invoiceNumber}</p>
+            <p><strong>Date:</strong> {formValues.date}</p>
+            <p><strong>Project Status:</strong> {formValues.projectStatus}</p>
+            <p><strong>Description:</strong> {formValues.description}</p>
+            <p><strong>Client ID:</strong> {formValues.clientId}</p>
+            <p><strong>Client Category:</strong> {formValues.clientCategory}</p>
+            <p><strong>Survey Fee:</strong> Ksh {formValues.surveyFee}</p>
+            <p><strong>Local Authority Fee:</strong> Ksh {formValues.localAuthorityFee}</p>
             <h3 className="text-xl font-semibold mb-2">Cost Breakdown</h3>
             <ul className="mb-4">
-              {formik.values.drillingServices.map((service, index) => (
+              {formValues.drillingServices.map((service, index) => (
                 <li key={index}>{service}: Ksh {fees[service]}</li>
               ))}
-              {formik.values.pumpTypes.map((pump, index) => (
+              {formValues.pumpTypes.map((pump, index) => (
                 <li key={index}>{pump}: Ksh {fees[pump]}</li>
               ))}
-              <li>Pipe Type ({formik.values.pipeType}): Ksh {fees[formik.values.pipeType]}</li>
-              <li>Pipe Diameter ({formik.values.pipeDiameter} inches): Ksh {formik.values.pipeDiameter * fees["Pipe Diameter"]}</li>
-              <li>Pipe Length ({formik.values.pipeLength} mm): Ksh {formik.values.pipeLength * fees["Pipe Length"]}</li>
-              <li>Number Of Outlets ({formik.values.numberOfOutlets}): Ksh {formik.values.numberOfOutlets * fees["Number Of Outlets"]}</li>
-              <li>Tank Capacity ({formik.values.tankCapacity} liters): Ksh {formik.values.tankCapacity * fees["Tank Capacity"]}</li>
-              {formik.values.otherServices.map((service, index) => (
+              <li>Pipe Type ({formValues.pipeType}): Ksh {fees[formValues.pipeType]}</li>
+              <li>Pipe Diameter ({formValues.pipeDiameter} inches): Ksh {formValues.pipeDiameter * fees["Pipe Diameter"]}</li>
+              <li>Pipe Length ({formValues.pipeLength} mm): Ksh {formValues.pipeLength * fees["Pipe Length"]}</li>
+              <li>Number Of Outlets ({formValues.numberOfOutlets}): Ksh {formValues.numberOfOutlets * fees["Number Of Outlets"]}</li>
+              <li>Tank Capacity ({formValues.tankCapacity} liters): Ksh {formValues.tankCapacity * fees["Tank Capacity"]}</li>
+              {formValues.otherServices.map((service, index) => (
                 <li key={index}>{service}: Ksh {fees[service]}</li>
               ))}
             </ul>
-            <p><strong>Total Cost Before Tax:</strong> Ksh {formik.values.totalCostBeforeTax}</p>
-            <p><strong>Tax Amount (16%):</strong> Ksh {formik.values.taxAmount}</p>
-            <p><strong>Total Cost After Tax:</strong> Ksh {formik.values.totalCostAfterTax}</p>
+            <p><strong>Total Cost Before Tax:</strong> Ksh {formValues.totalCostBeforeTax}</p>
+            <p><strong>Tax Amount (16%):</strong> Ksh {formValues.taxAmount}</p>
+            <p><strong>Total Cost After Tax:</strong> Ksh {formValues.totalCostAfterTax}</p>
             <button
               className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-700"
               onClick={() => setShowPreview(false)}
@@ -1043,5 +776,3 @@ const Invoice = ({ ThemeStyles }) => {
 };
 
 export default Invoice;
-
-
