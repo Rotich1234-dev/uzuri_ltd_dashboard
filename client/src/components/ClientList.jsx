@@ -62,7 +62,7 @@ const ClientList = ({ ThemeStyles }) => {
           placeholder="Search clients..."
           value={searchTerm}
           onChange={handleSearchChange}
-          className="w-full p-2 border rounded"
+          className="text-gray-900 p-2 border rounded"
         />
       </div>
       {loading ? (

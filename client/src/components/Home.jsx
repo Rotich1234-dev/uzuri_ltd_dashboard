@@ -1,7 +1,7 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { Suspense, lazy } from "react";
 import { Box } from "@mui/material";
-import Authentication from "./Authentication";
+
+const Authentication = lazy(() => import("./Authentication"));
 
 const Home = ({ ThemeStyles }) => {
   return (
@@ -9,7 +9,7 @@ const Home = ({ ThemeStyles }) => {
       className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto"
       style={{
         ...ThemeStyles,
-        backgroundImage: 'url("src/assets/water.jpeg")',
+        backgroundImage: 'url("/src/assets/water.jpeg")',
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -24,7 +24,9 @@ const Home = ({ ThemeStyles }) => {
           </h2>
         </div>
       </Box>
-      <Authentication />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Authentication />
+      </Suspense>
     </div>
   );
 };
