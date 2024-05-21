@@ -19,7 +19,7 @@ const Item = ({ title, to, icon }) => {
 
 function SideBar({ toggleColor, darkTheme }) {
   const [isCollapsed, setCollapsed] = useState(false);
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const navigate = useNavigate();
 
   const ThemeStyles = {
@@ -32,7 +32,7 @@ function SideBar({ toggleColor, darkTheme }) {
   };
 
   const handleLogout = () => {
-    navigate("/home"); 
+    navigate("/home");
   };
 
   return (
@@ -62,13 +62,21 @@ function SideBar({ toggleColor, darkTheme }) {
             </Box>
             {!isCollapsed && (
               <Box>
-                <Box className="mt-3">
-                  <h1 className={`text-2xl text-center font-bold ${darkTheme ? 'text-white' : 'text-black'}`}>
-                    {user?.name || ""}
-                  </h1>
-                  <h5 className={`text-xl font-bold text-center ${darkTheme ? 'text-gray-400' : 'text-gray-900'}`}>
-                    {user?.role || "Admin"}
-                  </h5>
+                <Box className="mt-3 text-center">
+                  {user ? (
+                    <>
+                      <h1 className={`text-2xl font-bold ${darkTheme ? 'text-white' : 'text-black'}`}>
+                        {user.name}
+                      </h1>
+                      <h5 className={`text-xl font-bold ${darkTheme ? 'text-gray-400' : 'text-gray-900'}`}>
+                        {user.role || "Admin"}
+                      </h5>
+                    </>
+                  ) : (
+                    <h5 className={`text-xl font-bold ${darkTheme ? 'text-gray-400' : 'text-gray-900'}`}>
+                      Admin
+                    </h5>
+                  )}
                 </Box>
               </Box>
             )}
@@ -82,7 +90,9 @@ function SideBar({ toggleColor, darkTheme }) {
             <Box className="flex items-center justify-center py-3">
               <IconButton onClick={handleLogout} className="text-black hover:text-gray-600">
                 <ExitToAppIcon className="text-2xl" />
-                <span className={`ml-2 ${darkTheme ? 'text-gray-400 font-bold' : 'text-black'}`}>Logout</span>
+                {!isCollapsed && (
+                  <span className={`ml-2 ${darkTheme ? 'text-gray-400 font-bold' : 'text-black'}`}>Logout</span>
+                )}
               </IconButton>
             </Box>
           </Menu>
@@ -93,5 +103,3 @@ function SideBar({ toggleColor, darkTheme }) {
 }
 
 export default SideBar;
-
-
