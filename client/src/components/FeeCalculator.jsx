@@ -7,15 +7,14 @@ const FeeCalculator = ({ theme_styles }) => {
   const [clients, set_clients] = useState([]);
   const [selected_client_id, set_selected_client_id] = useState("");
   const [client_email, set_client_email] = useState("");
-  const [client_type, set_client_type] = useState({});
   const [available_drilling_services, set_available_drilling_services] = useState([]);
-  const [selected_drilling_services, set_selected_drilling_services] = useState([]);
+  const [selected_drilling_id, set_selected_drilling_id] = useState([]);
   const [available_pump_types, set_available_pump_types] = useState([]);
-  const [selected_pump_types, set_selected_pump_types] = useState([]);
+  const [selected_pump_id, set_selected_pump_id] = useState([]);
   const [pump_depth, set_pump_depth] = useState("");
   const [pump_height, set_pump_height] = useState("");
   const [available_pipe_types, set_available_pipe_types] = useState([]);
-  const [selected_pipe_types, set_selected_pipe_types] = useState([]);
+  const [selected_pipe_id, set_selected_pipe_id] = useState([]);
   const [pipe_diameter, set_pipe_diameter] = useState("");
   const [pipe_length, set_pipe_length] = useState("");
   const [number_of_outlets, set_number_of_outlets] = useState("");
@@ -23,11 +22,6 @@ const FeeCalculator = ({ theme_styles }) => {
   const [total_cost, set_total_cost] = useState(null);
   const [tax_amount, set_tax_amount] = useState(null);
   const [cost_breakdown, set_cost_breakdown] = useState([]);
-  const [client_categories, set_client_categories] = useState({
-    1: { category: "Industrial", survey_fee: "", local_authority_fee: "" },
-    2: { category: "Commercial", survey_fee: "", local_authority_fee: "" },
-    3: { category: "Domestic", survey_fee: "", local_authority_fee: "" },
-  });
 
   useEffect(() => {
     const fetch_clients = async () => {
@@ -104,25 +98,8 @@ const FeeCalculator = ({ theme_styles }) => {
     const client = clients.find((client) => client.client_id === parseInt(client_id));
     if (client) {
       set_client_email(client.email);
-
-      const category = client_categories[client.category_id];
-      if (category) {
-        set_client_type(category);
-      } else {
-        set_client_type({});
-      }
     } else {
-      set_client_type({});
       set_client_email("");
-    }
-  };
-
-  const handle_category_change = (e) => {
-    const category_id = e.target.value;
-    if (client_categories[category_id]) {
-      set_client_type(client_categories[category_id]);
-    } else {
-      set_client_type({});
     }
   };
 
@@ -139,13 +116,12 @@ const FeeCalculator = ({ theme_styles }) => {
 
   const handle_reset = () => {
     set_selected_client_id("");
-    set_client_type({});
     set_client_email("");
-    set_selected_drilling_services([]);
-    set_selected_pump_types([]);
+    set_selected_drilling_id([]);
+    set_selected_pump_id([]);
     set_pump_depth("");
     set_pump_height("");
-    set_selected_pipe_types([]);
+    set_selected_pipe_id([]);
     set_pipe_diameter("");
     set_pipe_length("");
     set_number_of_outlets("");
@@ -159,17 +135,16 @@ const FeeCalculator = ({ theme_styles }) => {
     e.preventDefault();
 
     const calculation_data = {
-      client_Id: selected_client_id,
-      client_type: client_type.category, 
-      drilling_service: selected_drilling_services.length > 0 ? selected_drilling_services[0] : "",
-      pump_type: selected_pump_types.length > 0 ? selected_pump_types[0] : "",
-      pump_depth: pump_depth,
-      pump_height: pump_height,
-      pipe_types: selected_pipe_types.length > 0 ? selected_pipe_types[0] : "",
-      pipe_diameter: pipe_diameter,
-      pipe_length: pipe_length,
-      number_of_outlets: number_of_outlets,
-      tank_capacity: tank_capacity
+      client_Id: parseInt(selected_client_id),
+      drilling_id: selected_drilling_id.length > 0 ? selected_drilling_id[0] : 0,
+      pump_id: selected_pump_id.length > 0 ? selected_pump_id[0] : 0,
+      pump_depth: parseInt(pump_depth),
+      pump_height: parseInt(pump_height),
+      pipe_id: selected_pipe_id.length > 0 ? selected_pipe_id[0] : 0,
+      pipe_diameter: parseInt(pipe_diameter),
+      pipe_length: parseInt(pipe_length),
+      number_of_outlets: parseInt(number_of_outlets),
+      tank_capacity: parseInt(tank_capacity)
     };
 
     fetch("http://127.0.0.1:8080/api/admin/routes/fees", {
@@ -194,18 +169,18 @@ const FeeCalculator = ({ theme_styles }) => {
     .catch(error => {
       console.error(error.message);
     });
-    console.log(calculation_data);
+    console.log(JSON.stringify(calculation_data));
+
   };
 
   const save_client_details = async () => {
     const client_details = {
       client_id: selected_client_id,
-      client_type,
-      drilling_services: selected_drilling_services,
-      pump_types: selected_pump_types,
+      drilling_services: selected_drilling_id,
+      pump_types: selected_pump_id,
       pump_depth,
       pump_height,
-      pipe_types: selected_pipe_types,
+      pipe_types: selected_pipe_id,
       pipe_diameter,
       pipe_length,
       number_of_outlets,
@@ -237,7 +212,6 @@ const FeeCalculator = ({ theme_styles }) => {
     });
   
   };
-
 
   const background = {
     ...theme_styles,
@@ -287,35 +261,6 @@ const FeeCalculator = ({ theme_styles }) => {
                   />
                 </div>
               </div>
-
-              <div className="flex flex-wrap -mx-3 mb-4">
-                <div className="text-center w-full md:w-2/2 px-3 mb-4 md:mb-0">
-                  <label htmlFor="clientType" className="block text-gray-900 text-sm font-bold mb-2">
-                    Client Type
-                  </label>
-                  <input
-                    type="text"
-                    className="block w-full bg-gray-600 border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    id="clientType"
-                    value={client_type.category || ""}
-                    readOnly
-                  />
-                  {!client_type.category && (
-                    <select
-                      className="block w-full bg-gray-600 border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 mt-2"
-                      id="clientTypeSelect"
-                      onChange={handle_category_change}
-                    >
-                      <option value="">Select Client Category</option>
-                      {Object.keys(client_categories).map((key) => (
-                        <option key={key} value={key}>
-                          {client_categories[key].category}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-              </div>
             </>
           )}
 
@@ -327,23 +272,23 @@ const FeeCalculator = ({ theme_styles }) => {
               <select
                 className="block w-full bg-gray-600 border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 id="drillingServices"
-                onChange={(e) => handle_add_service(e, set_selected_drilling_services, selected_drilling_services)}
+                onChange={(e) => handle_add_service(e, set_selected_drilling_id, selected_drilling_id)}
               >
                 <option value="">Select Drilling Service</option>
                 {available_drilling_services.map((service) => (
-                  <option key={service.id} value={service.drill_type}>
+                  <option key={service.id} value={service.id}>
                     {service.drill_type}
                   </option>
                 ))}
               </select>
               <ul className="text-gray-500 list-disc pl-5 mb-4">
-                {selected_drilling_services.map((service, index) => (
+                {selected_drilling_id.map((service, index) => (
                   <li key={index} className="flex items-center justify-between">
                     {service}
                     <button
                       type="button"
                       className="mt-2 bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                      onClick={() => handle_remove_service(service, set_selected_drilling_services, selected_drilling_services)}
+                      onClick={() => handle_remove_service(service, set_selected_drilling_id, selected_drilling_id)}
                     >
                       Remove
                     </button>
@@ -361,23 +306,23 @@ const FeeCalculator = ({ theme_styles }) => {
               <select
                 className="block w-full bg-gray-600 border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 id="pumpTypes"
-                onChange={(e) => handle_add_service(e, set_selected_pump_types, selected_pump_types)}
+                onChange={(e) => handle_add_service(e, set_selected_pump_id, selected_pump_id)}
               >
                 <option value="">Select Pump Type</option>
                 {available_pump_types.map((pump) => (
-                  <option key={pump.id} value={pump.pump_name}>
+                  <option key={pump.id} value={pump.id}>
                     {pump.pump_name}
                   </option>
                 ))}
               </select>
               <ul className="text-gray-500 list-disc pl-5 mb-4">
-                {selected_pump_types.map((service, index) => (
+                {selected_pump_id.map((service, index) => (
                   <li key={index} className="flex items-center justify-between">
                     {service}
                     <button
                       type="button"
                       className="mt-2 bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                      onClick={() => handle_remove_service(service, set_selected_pump_types, selected_pump_types)}
+                      onClick={() => handle_remove_service(service, set_selected_pump_id, selected_pump_id)}
                     >
                       Remove
                     </button>
@@ -420,23 +365,23 @@ const FeeCalculator = ({ theme_styles }) => {
               <select
                 className="block w-full bg-gray-600 border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 id="pipeType"
-                onChange={(e) => handle_add_service(e, set_selected_pipe_types, selected_pipe_types)}
+                onChange={(e) => handle_add_service(e, set_selected_pipe_id, selected_pipe_id)}
               >
                 <option value="">Select Pipe Type</option>
                 {available_pipe_types.map((pipe) => (
-                  <option key={pipe.id} value={pipe.pipe_name}>
+                  <option key={pipe.id} value={pipe.id}>
                     {pipe.pipe_name}
                   </option>
                 ))}
               </select>
               <ul className="text-gray-500 list-disc pl-5 mb-4">
-                {selected_pipe_types.map((pipe, index) => (
+                {selected_pipe_id.map((pipe, index) => (
                   <li key={index} className="flex items-center justify-between">
                     {pipe}
                     <button
                       type="button"
                       className="mt-2 bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
-                      onClick={() => handle_remove_service(pipe, set_selected_pipe_types, selected_pipe_types)}
+                      onClick={() => handle_remove_service(pipe, set_selected_pipe_id, selected_pipe_id)}
                     >
                       Remove
                     </button>
@@ -514,75 +459,71 @@ const FeeCalculator = ({ theme_styles }) => {
         </form>
 
         {total_cost !== null && (
-  <>
-    <div className="mt-6 text-center">
-      <h2 className="text-gray-900 text-xl font-semibold mb-2">Breakdown of Costs</h2>
-      <ul className="text-gray-700 text-lg mb-4">
-        {cost_breakdown.map((item, index) => (
-          <li key={index} className="flex justify-between py-2 px-4 border-b border-gray-300">
-            <span>{item.label}</span>
-            <span>Ksh. {item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="text-left">
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Client Id:</span>
-          <span className="text-gray-900 text-lg font-bold">{selected_client_id}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Client Type:</span>
-          <span className="text-gray-900 text-lg font-bold">{client_type.category}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Drilling Services:</span>
-          <span className="text-gray-900 text-lg font-bold">{selected_drilling_services.join(', ')}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Pump Types:</span>
-          <span className="text-gray-900 text-lg font-bold">{selected_pump_types.join(', ')}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Pipe Types:</span>
-          <span className="text-gray-900 text-lg font-bold">{selected_pipe_types.join(', ')}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Pipe Diameter:</span>
-          <span className="text-gray-900 text-lg font-bold">{pipe_diameter}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Pipe Length:</span>
-          <span className="text-gray-900 text-lg font-bold">{pipe_length}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Number of Outlets:</span>
-          <span className="text-gray-900 text-lg font-bold">{number_of_outlets}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Tank Capacity:</span>
-          <span className="text-gray-900 text-lg font-bold">{tank_capacity}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Tax Amount (16%):</span>
-          <span className="text-gray-900 text-lg font-bold">{`Ksh. ${tax_amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
-        </div>
-        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-          <span className="text-gray-900 text-lg font-semibold">Total Cost:</span>
-          <span className="text-gray-900 text-lg font-bold">{`Ksh. ${total_cost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
-        </div>
-      </div>
-    </div>
-    <div className="flex justify-center mt-4">
-      <button
-        type="button"
-        className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-900"
-        onClick={save_client_details}
-      >
-        Save
-      </button>
-    </div>
-  </>
-)}
+          <>
+            <div className="mt-6 text-center">
+              <h2 className="text-gray-900 text-xl font-semibold mb-2">Breakdown of Costs</h2>
+              <ul className="text-gray-700 text-lg mb-4">
+                {cost_breakdown.map((item, index) => (
+                  <li key={index} className="flex justify-between py-2 px-4 border-b border-gray-300">
+                    <span>{item.label}</span>
+                    <span>Ksh. {item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="text-left">
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Client Id:</span>
+                  <span className="text-gray-900 text-lg font-bold">{selected_client_id}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Drilling Services:</span>
+                  <span className="text-gray-900 text-lg font-bold">{selected_drilling_id.join(', ')}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Pump Types:</span>
+                  <span className="text-gray-900 text-lg font-bold">{selected_pump_id.join(', ')}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Pipe Types:</span>
+                  <span className="text-gray-900 text-lg font-bold">{selected_pipe_id.join(', ')}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Pipe Diameter:</span>
+                  <span className="text-gray-900 text-lg font-bold">{pipe_diameter}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Pipe Length:</span>
+                  <span className="text-gray-900 text-lg font-bold">{pipe_length}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Number of Outlets:</span>
+                  <span className="text-gray-900 text-lg font-bold">{number_of_outlets}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Tank Capacity:</span>
+                  <span className="text-gray-900 text-lg font-bold">{tank_capacity}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Tax Amount (16%):</span>
+                  <span className="text-gray-900 text-lg font-bold">{`Ksh. ${tax_amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Total Cost:</span>
+                  <span className="text-gray-900 text-lg font-bold">{`Ksh. ${total_cost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center mt-4">
+              <button
+                type="button"
+                className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-900"
+                onClick={save_client_details}
+              >
+                Save
+              </button>
+            </div>
+          </>
+        )}
       </div>
       <button
         className="py-2 px-3 mt-4 flex items-center justify-center bg-gray-500 text-white font-bold rounded-full focus:outline-none focus:shadow-outline hover:bg-gray-900"
@@ -595,5 +536,8 @@ const FeeCalculator = ({ theme_styles }) => {
 };
 
 export default FeeCalculator;
+
+
+
 
 
