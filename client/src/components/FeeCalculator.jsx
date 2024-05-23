@@ -22,6 +22,7 @@ const FeeCalculator = ({ theme_styles }) => {
   const [total_cost, set_total_cost] = useState(null);
   const [tax_amount, set_tax_amount] = useState(null);
   const [cost_breakdown, set_cost_breakdown] = useState([]);
+  const [total_payable, set_total_payable] = useState(null);
 
   useEffect(() => {
     const fetch_clients = async () => {
@@ -129,6 +130,7 @@ const FeeCalculator = ({ theme_styles }) => {
     set_total_cost(null);
     set_tax_amount(null);
     set_cost_breakdown([]);
+    set_total_payable(null);
   };
 
   const handle_submit = async (e) => {
@@ -165,6 +167,7 @@ const FeeCalculator = ({ theme_styles }) => {
       set_total_cost(result.total_cost || 0);
       set_tax_amount(result.tax_amount || 0);
       set_cost_breakdown(result.cost_breakdown || []);
+      set_total_payable((result.total_cost || 0) + (result.tax_amount || 0));
     })
     .catch(error => {
       console.error(error.message);
@@ -187,6 +190,7 @@ const FeeCalculator = ({ theme_styles }) => {
       tank_capacity,
       total_cost,
       tax_amount,
+      total_payable,
     };
 
     fetch("http://127.0.0.1:8080/api/admin/routes/fees", {
@@ -216,6 +220,16 @@ const FeeCalculator = ({ theme_styles }) => {
   const background = {
     ...theme_styles,
     backgroundColor: "#FFFAFA",
+  };
+
+  const get_service_name_by_id = (id, services) => {
+    const service = services.find(service => service.id === parseInt(id));
+    return service ? service.drill_type || service.pump_name || service.pipe_name : "Unknown";
+  };
+
+  const get_client_name_by_id = (id, clients) => {
+    const client = clients.find(client => client.client_id === parseInt(id));
+    return client ? `${client.firstName} ${client.lastName}` : "Unknown";
   };
 
   return (
@@ -284,7 +298,7 @@ const FeeCalculator = ({ theme_styles }) => {
               <ul className="text-gray-500 list-disc pl-5 mb-4">
                 {selected_drilling_id.map((service, index) => (
                   <li key={index} className="flex items-center justify-between">
-                    {service}
+                    {get_service_name_by_id(service, available_drilling_services)}
                     <button
                       type="button"
                       className="mt-2 bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
@@ -318,7 +332,7 @@ const FeeCalculator = ({ theme_styles }) => {
               <ul className="text-gray-500 list-disc pl-5 mb-4">
                 {selected_pump_id.map((service, index) => (
                   <li key={index} className="flex items-center justify-between">
-                    {service}
+                    {get_service_name_by_id(service, available_pump_types)}
                     <button
                       type="button"
                       className="mt-2 bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
@@ -377,7 +391,7 @@ const FeeCalculator = ({ theme_styles }) => {
               <ul className="text-gray-500 list-disc pl-5 mb-4">
                 {selected_pipe_id.map((pipe, index) => (
                   <li key={index} className="flex items-center justify-between">
-                    {pipe}
+                    {get_service_name_by_id(pipe, available_pipe_types)}
                     <button
                       type="button"
                       className="mt-2 bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
@@ -472,20 +486,20 @@ const FeeCalculator = ({ theme_styles }) => {
               </ul>
               <div className="text-left">
                 <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-                  <span className="text-gray-900 text-lg font-semibold">Client Id:</span>
-                  <span className="text-gray-900 text-lg font-bold">{selected_client_id}</span>
+                  <span className="text-gray-900 text-lg font-semibold">Client Name:</span>
+                  <span className="text-gray-900 text-lg font-bold">{get_client_name_by_id(selected_client_id, clients)}</span>
                 </div>
                 <div className="flex justify-between py-2 px-4 border-b border-gray-300">
                   <span className="text-gray-900 text-lg font-semibold">Drilling Services:</span>
-                  <span className="text-gray-900 text-lg font-bold">{selected_drilling_id.join(', ')}</span>
+                  <span className="text-gray-900 text-lg font-bold">{selected_drilling_id.map(id => get_service_name_by_id(id, available_drilling_services)).join(', ')}</span>
                 </div>
                 <div className="flex justify-between py-2 px-4 border-b border-gray-300">
                   <span className="text-gray-900 text-lg font-semibold">Pump Types:</span>
-                  <span className="text-gray-900 text-lg font-bold">{selected_pump_id.join(', ')}</span>
+                  <span className="text-gray-900 text-lg font-bold">{selected_pump_id.map(id => get_service_name_by_id(id, available_pump_types)).join(', ')}</span>
                 </div>
                 <div className="flex justify-between py-2 px-4 border-b border-gray-300">
                   <span className="text-gray-900 text-lg font-semibold">Pipe Types:</span>
-                  <span className="text-gray-900 text-lg font-bold">{selected_pipe_id.join(', ')}</span>
+                  <span className="text-gray-900 text-lg font-bold">{selected_pipe_id.map(id => get_service_name_by_id(id, available_pipe_types)).join(', ')}</span>
                 </div>
                 <div className="flex justify-between py-2 px-4 border-b border-gray-300">
                   <span className="text-gray-900 text-lg font-semibold">Pipe Diameter:</span>
@@ -508,12 +522,16 @@ const FeeCalculator = ({ theme_styles }) => {
                   <span className="text-gray-900 text-lg font-bold">{`Ksh. ${tax_amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
                 </div>
                 <div className="flex justify-between py-2 px-4 border-b border-gray-300">
-                  <span className="text-gray-900 text-lg font-semibold">Total Cost:</span>
+                  <span className="text-gray-900 text-lg font-semibold">Services Amount:</span>
                   <span className="text-gray-900 text-lg font-bold">{`Ksh. ${total_cost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
+                </div>
+                <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+                  <span className="text-gray-900 text-lg font-semibold">Total Cost:</span>
+                  <span className="text-gray-900 text-lg font-bold">{`Ksh. ${total_payable.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
                 </div>
               </div>
             </div>
-            <div className="flex justify-center mt-4">
+            {/* <div className="flex justify-center mt-4">
               <button
                 type="button"
                 className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-900"
@@ -521,7 +539,7 @@ const FeeCalculator = ({ theme_styles }) => {
               >
                 Save
               </button>
-            </div>
+            </div> */}
           </>
         )}
       </div>
@@ -536,8 +554,6 @@ const FeeCalculator = ({ theme_styles }) => {
 };
 
 export default FeeCalculator;
-
-
 
 
 

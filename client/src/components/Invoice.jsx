@@ -13,6 +13,7 @@ const Invoice = ({ ThemeStyles }) => {
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const [fees, setFees] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -99,6 +100,10 @@ const Invoice = ({ ThemeStyles }) => {
     },
   });
 
+  const formatCurrency = (amount) => {
+    return `Ksh ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
+
   const handleBackClick = () => {
     navigate("/dashboard");
   };
@@ -108,34 +113,35 @@ const Invoice = ({ ThemeStyles }) => {
     const doc = new jsPDF();
 
     doc.text("Invoice", 20, 20);
-    doc.text(`From: Uzuri Limited Accounts Department`, 20, 30);
+    doc.text("From: Uzuri Limited Accounts Department", 20, 30);
     doc.text(`To: ${formik.values.client_name} (${formik.values.client_email})`, 20, 40);
     doc.text(`Invoice #: ${formik.values.invoice_number}`, 20, 50);
     doc.text(`Date: ${formik.values.date}`, 20, 60);
     doc.text(`Project Status: ${formik.values.project_status}`, 20, 70);
     doc.text(`Description: ${formik.values.description}`, 20, 80);
     doc.text(`Client ID: ${formik.values.client_id}`, 20, 90);
-    doc.text(`Client Category: ${fees.client_categories[formik.values.client_category]?.type}`, 20, 100);
-    doc.text(`Survey Fee: Ksh ${fees.client_categories[formik.values.client_category]?.survey_fee}`, 20, 110);
-    doc.text(`Local Authority Fee: Ksh ${fees.client_categories[formik.values.client_category]?.local_authority_fee}`, 20, 120);
+    doc.text(`Client Category: ${fees.client_categories?.[formik.values.client_category]?.type || ''}`, 20, 100);
+    doc.text(`Survey Fee: ${formatCurrency(fees.client_categories?.[formik.values.client_category]?.survey_fee || 0)}`, 20, 110);
+    doc.text(`Local Authority Fee: ${formatCurrency(fees.client_categories?.[formik.values.client_category]?.local_authority_fee || 0)}`, 20, 120);
 
+    // Replacing IDs with names
     doc.autoTable({
       startY: 130,
       head: [['Service', 'Cost']],
       body: [
-        ...formik.values.drilling_id.map((service) => [service, `Ksh ${fees.drilling_costs[service]}`]),
-        ...formik.values.pump_id.map((pump) => [pump, `Ksh ${fees.pump_costs[pump]}`]),
-        ['Pipe Type', `Ksh ${fees.pipe_costs[formik.values.pipe_id]}`],
-        ['Pipe Diameter', `Ksh ${formik.values.pipe_diameter * fees.plumbing_costs.pipe_diameter}`],
-        ['Pipe Length', `Ksh ${formik.values.pipe_length * fees.plumbing_costs.pipe_length}`],
-        ['Number Of Outlets', `Ksh ${formik.values.number_of_outlets * fees.plumbing_costs.number_of_outlets}`],
-        ['Tank Capacity', `Ksh ${formik.values.tank_capacity * fees.tank_installation_cost_per_liter}`],
+        ...formik.values.drilling_id.map((service) => [service, formatCurrency(fees.drilling_costs?.[service] || 0)]),
+        ...formik.values.pump_id.map((pump) => [pump, formatCurrency(fees.pump_costs?.[pump] || 0)]), // Using pump names
+        ['Pipe Type', formatCurrency(fees.pipe_costs?.[formik.values.pipe_id] || 0)],
+        ['Pipe Diameter', formatCurrency(formik.values.pipe_diameter * (fees.plumbing_costs?.pipe_diameter || 0))],
+        ['Pipe Length', formatCurrency(formik.values.pipe_length * (fees.plumbing_costs?.pipe_length || 0))],
+        ['Number Of Outlets', formatCurrency(formik.values.number_of_outlets * (fees.plumbing_costs?.number_of_outlets || 0))],
+        ['Tank Capacity', formatCurrency(formik.values.tank_capacity * (fees.tank_installation_cost_per_liter || 0))],
       ],
     });
 
-    doc.text(`Total Cost Before Tax: Ksh ${formik.values.total_cost_before_tax}`, 20, doc.autoTable.previous.finalY + 10);
-    doc.text(`Tax Amount (16%): Ksh ${formik.values.tax_amount}`, 20, doc.autoTable.previous.finalY + 20);
-    doc.text(`Total Cost After Tax: Ksh ${formik.values.total_cost_after_tax}`, 20, doc.autoTable.previous.finalY + 30);
+    doc.text(`Total Cost Before Tax: ${formatCurrency(formik.values.total_cost_before_tax)}`, 20, doc.autoTable.previous.finalY + 10);
+    doc.text(`Tax Amount (16%): ${formatCurrency(formik.values.tax_amount)}`, 20, doc.autoTable.previous.finalY + 20);
+    doc.text(`Total Cost After Tax: ${formatCurrency(formik.values.total_cost_after_tax)}`, 20, doc.autoTable.previous.finalY + 30);
 
     return doc;
   };
@@ -151,16 +157,16 @@ const Invoice = ({ ThemeStyles }) => {
       invoice_number: formik.values.invoice_number,
       invoice_date: formik.values.date,
       services: [
-        ...formik.values.drilling_id.map((service) => `${service}: Ksh ${fees.drilling_costs[service]}`),
-        ...formik.values.pump_id.map((pump) => `${pump}: Ksh ${fees.pump_costs[pump]}`),
-        `Pipe Type (${formik.values.pipe_id}): Ksh ${fees.pipe_costs[formik.values.pipe_id]}`,
-        `Pipe Diameter (${formik.values.pipe_diameter} inches): Ksh ${formik.values.pipe_diameter * fees.plumbing_costs.pipe_diameter}`,
-        `Pipe Length (${formik.values.pipe_length} mm): Ksh ${formik.values.pipe_length * fees.plumbing_costs.pipe_length}`,
-        `Number Of Outlets (${formik.values.number_of_outlets}): Ksh ${formik.values.number_of_outlets * fees.plumbing_costs.number_of_outlets}`,
-        `Tank Capacity (${formik.values.tank_capacity} liters): Ksh ${formik.values.tank_capacity * fees.tank_installation_cost_per_liter}`,
-        `Total Cost Before Tax: Ksh ${formik.values.total_cost_before_tax}`,
-        `Tax Amount (16%): Ksh ${formik.values.tax_amount}`,
-        `Total Cost After Tax: Ksh ${formik.values.total_cost_after_tax}`
+        ...formik.values.drilling_id.map((service) => `${service}: ${formatCurrency(fees.drilling_costs?.[service] || 0)}`), // Using service names
+        ...formik.values.pump_id.map((pump) => `${pump}: ${formatCurrency(fees.pump_costs?.[pump] || 0)}`), // Using pump names
+        `Pipe Type (${formik.values.pipe_id}): ${formatCurrency(fees.pipe_costs?.[formik.values.pipe_id] || 0)}`,
+        `Pipe Diameter (${formik.values.pipe_diameter} inches): ${formatCurrency(formik.values.pipe_diameter * (fees.plumbing_costs?.pipe_diameter || 0))}`,
+        `Pipe Length (${formik.values.pipe_length} mm): ${formatCurrency(formik.values.pipe_length * (fees.plumbing_costs?.pipe_length || 0))}`,
+        `Number Of Outlets (${formik.values.number_of_outlets}): ${formatCurrency(formik.values.number_of_outlets * (fees.plumbing_costs?.number_of_outlets || 0))}`,
+        `Tank Capacity (${formik.values.tank_capacity} liters): ${formatCurrency(formik.values.tank_capacity * (fees.tank_installation_cost_per_liter || 0))}`,
+        `Total Cost Before Tax: ${formatCurrency(formik.values.total_cost_before_tax)}`,
+        `Tax Amount (16%): ${formatCurrency(formik.values.tax_amount)}`,
+        `Total Cost After Tax: ${formatCurrency(formik.values.total_cost_after_tax)}`,
       ].join('\n'),
       pdf_base64: pdfBase64,
     };
@@ -233,16 +239,38 @@ const Invoice = ({ ThemeStyles }) => {
       });
   }, []);
 
+  const handleClientChange = (e) => {
+    const selectedClientId = e.target.value;
+    const selectedClient = clients.find(client => client.client_id === parseInt(selectedClientId));
+    if (selectedClient) {
+      const clientFees = fees?.find(fee => fee.client_Id === selectedClient.client_id);
+      setSelectedClient(clientFees);
+      formik.setFieldValue("client_id", selectedClient.client_id);
+      formik.setFieldValue("client_name", `${selectedClient.first_name} ${selectedClient.last_name}`);
+      formik.setFieldValue("client_email", selectedClient.email);
+      formik.setFieldValue("client_category", selectedClient.category_id);
+      if (clientFees) {
+        formik.setFieldValue("drilling_id", [clientFees.drilling_id]);
+        formik.setFieldValue("pump_id", [clientFees.pump_id]);
+        formik.setFieldValue("pipe_id", clientFees.pipe_id);
+        formik.setFieldValue("pipe_diameter", clientFees.pipe_diameter);
+        formik.setFieldValue("pipe_length", clientFees.pipe_length);
+        formik.setFieldValue("number_of_outlets", clientFees.number_of_outlets);
+        formik.setFieldValue("tank_capacity", clientFees.tank_capacity);
+        formik.setFieldValue("total_cost_before_tax", clientFees.total_cost);
+        formik.setFieldValue("tax_amount", clientFees.tax_amount);
+        formik.setFieldValue("total_cost_after_tax", clientFees.total_cost + clientFees.tax_amount);
+      }
+    }
+  };
+
   const background = {
     ...ThemeStyles,
-    backgroundColor: "#FFFAFA ",
+    backgroundColor: "#FFFAFA",
   };
 
   return (
-    <div
-      className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto"
-      style={background}
-    >
+    <div className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto" style={background}>
       <div className="max-w-4xl mx-auto bg-gray-100 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 relative">
         <div className="absolute top-0 right-0 p-4">
           <img
@@ -251,9 +279,7 @@ const Invoice = ({ ThemeStyles }) => {
             className="w-16 h-16 rounded-full object-cover"
           />
         </div>
-        <h1 className="text-gray-900 text-2xl font-bold text-center mb-6">
-          Invoice
-        </h1>
+        <h1 className="text-gray-900 text-2xl font-bold text-center mb-6">Invoice</h1>
         {successMessage && (
           <p className="text-green-500 text-center">{successMessage}</p>
         )}
@@ -265,10 +291,7 @@ const Invoice = ({ ThemeStyles }) => {
           <form onSubmit={formik.handleSubmit}>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="from"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="from">
                   From
                 </label>
                 <textarea
@@ -280,10 +303,7 @@ const Invoice = ({ ThemeStyles }) => {
                 />
               </div>
               <div className="w-full md:w-1/2 px-3">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="client_email"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="client_email">
                   Bill To
                 </label>
                 <input
@@ -306,36 +326,13 @@ const Invoice = ({ ThemeStyles }) => {
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="client_id"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="client_id">
                   Client Id
                 </label>
                 <select
                   id="client_id"
                   name="client_id"
-                  onChange={(e) => {
-                    const selectedClientId = e.target.value;
-                    const selectedClient = clients.find(
-                      (client) => client.client_id == selectedClientId
-                    );
-                    if (selectedClient) {
-                      formik.setFieldValue(
-                        "client_id",
-                        selectedClient.client_id
-                      );
-                      formik.setFieldValue("client_email", selectedClient.email);
-                      formik.setFieldValue(
-                        "client_name",
-                        `${selectedClient.firstName} ${selectedClient.lastName}`
-                      );
-                      formik.setFieldValue(
-                        "client_category",
-                        selectedClient.category_id
-                      );
-                    }
-                  }}
+                  onChange={handleClientChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.client_id}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -344,7 +341,7 @@ const Invoice = ({ ThemeStyles }) => {
                   <option value="" label="Select client" />
                   {clients.map((client) => (
                     <option key={client.client_id} value={client.client_id}>
-                      {client.client_id} - {client.firstName} {client.lastName}
+                      {client.client_id} - {client.first_name} {client.last_name}
                     </option>
                   ))}
                 </select>
@@ -355,10 +352,7 @@ const Invoice = ({ ThemeStyles }) => {
                 ) : null}
               </div>
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="invoice_number"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="invoice_number">
                   Invoice #
                 </label>
                 <input
@@ -378,10 +372,7 @@ const Invoice = ({ ThemeStyles }) => {
                 ) : null}
               </div>
               <div className="w-full md:w-2/4 px-3">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="date"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="date">
                   Invoice Date
                 </label>
                 <input
@@ -402,10 +393,7 @@ const Invoice = ({ ThemeStyles }) => {
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full px-3">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="description"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="description">
                   Description
                 </label>
                 <input
@@ -427,10 +415,7 @@ const Invoice = ({ ThemeStyles }) => {
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="project_status"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="project_status">
                   Project Status
                 </label>
                 <select
@@ -456,10 +441,7 @@ const Invoice = ({ ThemeStyles }) => {
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="drilling_id"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="drilling_id">
                   Drilling Services
                 </label>
                 <select
@@ -521,10 +503,7 @@ const Invoice = ({ ThemeStyles }) => {
                 </ul>
               </div>
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="pump_id"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="pump_id">
                   Pump Types
                 </label>
                 <select
@@ -586,10 +565,7 @@ const Invoice = ({ ThemeStyles }) => {
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="pipe_id"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="pipe_id">
                   Pipe Type
                 </label>
                 <select
@@ -601,9 +577,9 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select pipe type" />
-                  {fees?.pipe_types?.map((pipeType, index) => (
-                    <option key={index} value={pipeType}>
-                      {pipeType}
+                  {fees?.pipe_types?.map((pipe_type, index) => (
+                    <option key={index} value={pipe_type}>
+                      {pipe_type}
                     </option>
                   ))}
                 </select>
@@ -616,10 +592,7 @@ const Invoice = ({ ThemeStyles }) => {
             </div>
             <div className="flex flex-wrap mb-6">
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="pipe_diameter"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="pipe_diameter">
                   Pipe Diameter (inches)
                 </label>
                 <input
@@ -639,10 +612,7 @@ const Invoice = ({ ThemeStyles }) => {
                 ) : null}
               </div>
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="pipe_length"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="pipe_length">
                   Pipe Length (mm)
                 </label>
                 <input
@@ -662,10 +632,7 @@ const Invoice = ({ ThemeStyles }) => {
                 ) : null}
               </div>
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="number_of_outlets"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="number_of_outlets">
                   Number Of Outlets
                 </label>
                 <input
@@ -678,18 +645,14 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   placeholder="Enter number from 1"
                 />
-                {formik.touched.number_of_outlets &&
-                formik.errors.number_of_outlets ? (
+                {formik.touched.number_of_outlets && formik.errors.number_of_outlets ? (
                   <p className="text-red-500 text-xs italic">
                     {formik.errors.number_of_outlets}
                   </p>
                 ) : null}
               </div>
               <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="tank_capacity"
-                >
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="tank_capacity">
                   Tank Capacity (liters)
                 </label>
                 <input
@@ -713,7 +676,7 @@ const Invoice = ({ ThemeStyles }) => {
               <div className="flex flex-col items-start">
                 <h2 className="text-xl font-semibold text-gray-900">Amount</h2>
                 <p className="bg-gray-300 text-lg text-gray-900">
-                  Ksh {formik.values.total_cost_before_tax}
+                  {formatCurrency(formik.values.total_cost_before_tax)}
                 </p>
               </div>
               <div className="flex flex-col items-start">
@@ -721,7 +684,7 @@ const Invoice = ({ ThemeStyles }) => {
                   Tax (16%)
                 </h2>
                 <p className="bg-gray-300 text-lg text-gray-900">
-                  Ksh {formik.values.tax_amount}
+                  {formatCurrency(formik.values.tax_amount)}
                 </p>
               </div>
               <div className="flex flex-col items-start">
@@ -729,7 +692,7 @@ const Invoice = ({ ThemeStyles }) => {
                   TOTAL KES
                 </h2>
                 <p className="bg-gray-300 text-2xl text-gray-900">
-                  Ksh {formik.values.total_cost_after_tax}
+                  {formatCurrency(formik.values.total_cost_after_tax)}
                 </p>
               </div>
             </div>
@@ -806,26 +769,26 @@ const Invoice = ({ ThemeStyles }) => {
             <p><strong>Project Status:</strong> {formik.values.project_status}</p>
             <p><strong>Description:</strong> {formik.values.description}</p>
             <p><strong>Client ID:</strong> {formik.values.client_id}</p>
-            <p><strong>Client Category:</strong> {fees?.client_categories[formik.values.client_category]?.type}</p>
-            <p><strong>Survey Fee:</strong> Ksh {fees?.client_categories[formik.values.client_category]?.survey_fee}</p>
-            <p><strong>Local Authority Fee:</strong> Ksh {fees?.client_categories[formik.values.client_category]?.local_authority_fee}</p>
+            <p><strong>Client Category:</strong> {fees?.client_categories?.[formik.values.client_category]?.type || ''}</p>
+            <p><strong>Survey Fee:</strong> {formatCurrency(fees?.client_categories?.[formik.values.client_category]?.survey_fee || 0)}</p>
+            <p><strong>Local Authority Fee:</strong> {formatCurrency(fees?.client_categories?.[formik.values.client_category]?.local_authority_fee || 0)}</p>
             <h3 className="text-xl font-semibold mb-2">Cost Breakdown</h3>
             <ul className="mb-4">
               {formik.values.drilling_id.map((service, index) => (
-                <li key={index}>{service}: Ksh {fees?.drilling_costs[service]}</li>
+                <li key={index}>{service}: {formatCurrency(fees?.drilling_costs?.[service] || 0)}</li> // Using service names
               ))}
               {formik.values.pump_id.map((pump, index) => (
-                <li key={index}>{pump}: Ksh {fees?.pump_costs[pump]}</li>
+                <li key={index}>{pump}: {formatCurrency(fees?.pump_costs?.[pump] || 0)}</li> // Using pump names
               ))}
-              <li>Pipe Type ({formik.values.pipe_id}): Ksh {fees?.pipe_costs[formik.values.pipe_id]}</li>
-              <li>Pipe Diameter ({formik.values.pipe_diameter} inches): Ksh {formik.values.pipe_diameter * fees?.plumbing_costs.pipe_diameter}</li>
-              <li>Pipe Length ({formik.values.pipe_length} mm): Ksh {formik.values.pipe_length * fees?.plumbing_costs.pipe_length}</li>
-              <li>Number Of Outlets ({formik.values.number_of_outlets}): Ksh {formik.values.number_of_outlets * fees?.plumbing_costs.number_of_outlets}</li>
-              <li>Tank Capacity ({formik.values.tank_capacity} liters): Ksh {formik.values.tank_capacity * fees?.tank_installation_cost_per_liter}</li>
+              <li>Pipe Type ({formik.values.pipe_id}): {formatCurrency(fees?.pipe_costs?.[formik.values.pipe_id] || 0)}</li>
+              <li>Pipe Diameter ({formik.values.pipe_diameter} inches): {formatCurrency(formik.values.pipe_diameter * (fees.plumbing_costs?.pipe_diameter || 0))}</li>
+              <li>Pipe Length ({formik.values.pipe_length} mm): {formatCurrency(formik.values.pipe_length * (fees.plumbing_costs?.pipe_length || 0))}</li>
+              <li>Number Of Outlets ({formik.values.number_of_outlets}): {formatCurrency(formik.values.number_of_outlets * (fees.plumbing_costs?.number_of_outlets || 0))}</li>
+              <li>Tank Capacity ({formik.values.tank_capacity} liters): {formatCurrency(formik.values.tank_capacity * (fees.tank_installation_cost_per_liter || 0))}</li>
             </ul>
-            <p><strong>Total Cost Before Tax:</strong> Ksh {formik.values.total_cost_before_tax}</p>
-            <p><strong>Tax Amount (16%):</strong> Ksh {formik.values.tax_amount}</p>
-            <p><strong>Total Cost After Tax:</strong> Ksh {formik.values.total_cost_after_tax}</p>
+            <p><strong>Total Cost Before Tax:</strong> {formatCurrency(formik.values.total_cost_before_tax)}</p>
+            <p><strong>Tax Amount (16%):</strong> {formatCurrency(formik.values.tax_amount)}</p>
+            <p><strong>Total Cost After Tax:</strong> {formatCurrency(formik.values.total_cost_after_tax)}</p>
             <button
               className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-700"
               onClick={() => setShowPreview(false)}
@@ -840,5 +803,3 @@ const Invoice = ({ ThemeStyles }) => {
 };
 
 export default Invoice;
-
-
