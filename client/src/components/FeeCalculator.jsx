@@ -162,47 +162,51 @@ const FeeCalculator = ({ theme_styles }) => {
 
   const handle_submit = async (e) => {
     e.preventDefault();
-
+  
     const calculation_data = {
-      client_id: selected_client_id,
+      client_Id: selected_client_id,
       client_type: client_type.category, 
       drilling_service: selected_drilling_services.length > 0 ? selected_drilling_services[0] : "",
       pump_type: selected_pump_types.length > 0 ? selected_pump_types[0] : "",
       pump_depth: pump_depth,
       pump_height: pump_height,
-      pipe_type: selected_pipe_types.length > 0 ? selected_pipe_types[0] : "",
+      pipe_types: selected_pipe_types.length > 0 ? selected_pipe_types[0] : "",
       pipe_diameter: pipe_diameter,
       pipe_length: pipe_length,
       number_of_outlets: number_of_outlets,
       tank_capacity: tank_capacity
     };
-
+  
     console.log(calculation_data);  
     console.log(JSON.stringify(calculation_data));
-    
-    try {
-      const response = await fetch("http://127.0.0.1:8080/api/admin/routes/services", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(calculation_data),
-      });
+  
+    fetch("http://127.0.0.1:8080/api/admin/routes/fees", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Access-Control-Allow-Origin': '*',
 
+
+      },
+      body: JSON.stringify(calculation_data),
+    })
+    .then(response => {
       if (!response.ok) {
         throw new Error(`Error calculating fees: ${response.statusText}`);
       }
-
-      const result = await response.json();
+      return response.json();
+    })
+    .then(result => {
       set_total_amount(result.total_amount);
       set_tax_amount(result.tax_amount);
       set_cost_breakdown(result.cost_breakdown);
-    } catch (error) {
+    })
+    .catch(error => {
       console.error(error.message);
-    }
+    });
   };
-
-  const save_client_details = () => {
+  
+  const save_client_details = async () => {
     const client_details = {
       client_id: selected_client_id,
       client_type,
@@ -218,28 +222,32 @@ const FeeCalculator = ({ theme_styles }) => {
       total_amount,
       tax_amount,
     };
-
-    fetch("http://127.0.0.1:8080/api/admin/routes/services", {
+  
+    fetch("http://127.0.0.1:8080/api/admin/routes/fees", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Access-Control-Allow-Origin': '*',
+
       },
       body: JSON.stringify(client_details),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then(() => {
-        alert("Client details saved successfully!");
-      })
-      .catch((error) => {
-        console.error("Error saving client details:", error);
-        alert("Failed to save client details.");
-      });
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then(() => {
+      alert("Client details saved successfully!");
+    })
+    .catch(error => {
+      console.error("Error saving client details:", error);
+      alert("Failed to save client details.");
+    });
   };
+  
+  
 
   const background = {
     ...theme_styles,

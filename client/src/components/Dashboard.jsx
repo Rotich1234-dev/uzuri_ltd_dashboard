@@ -99,7 +99,7 @@ const background = {
           <h3 className="font-bold text-md mb-2">Client Registration Form</h3>
           <Link to="/registerclient">
             <button className="bg-gray-600 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">
-              Go to Client Registration Form
+              Client Registration Form
             </button>
           </Link>
         </div>
@@ -108,18 +108,26 @@ const background = {
           <h3 className="text-black font-bold text-md mb-2">Client List</h3>
           <Link to="/clientlist">
             <button className="bg-gray-600 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">
-              Go to Client List
+               Client List
             </button>
           </Link>
         </div>
-      </Box>
-
+      
+      <div className="w-full sm:w-2/5 bg-gray-500 p-4 rounded-lg shadow dark:border-gray-700 dark:hover:bg-gray-700">
+          <h3 className="text-white font-bold text-md mb-2">Services List</h3>
+          <Link to="/serviceslist">
+            <button className="bg-gray-600 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">
+               Service List
+            </button>
+          </Link>
+        </div>
+        </Box>
       <Box className="p-4 flex flex-col sm:flex-row gap-4">
         <div className="w-full sm:w-2/5 bg-gray-500 p-4 rounded-lg shadow dark:border-gray-700 dark:hover:bg-gray-700">
           <h3 className="font-bold text-md mb-2">Fee Calculator</h3>
           <Link to="/FeeCalculator">
             <button className="bg-gray-600 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">
-              Go to Fee Calculator
+               Fee Calculator
             </button>
           </Link>
         </div>
@@ -128,7 +136,7 @@ const background = {
           <h3 className="text-black font-bold text-md mb-2">Reports</h3>
           <Link to="/reports">
             <button className="bg-gray-600 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">
-              Go to Reports
+               Reports
             </button>
           </Link>
         </div>
@@ -137,7 +145,7 @@ const background = {
           <h3 className="font-bold text-md mb-2">Invoices</h3>
           <Link to="/invoice">
             <button className="bg-gray-600 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded">
-              Go to Invoices
+               Invoices
             </button>
           </Link>
         </div>

@@ -3,7 +3,6 @@ import SideBar from "./components/SideBar";
 import TopNav from "./components/TopNav";
 import { Routes, Route } from "react-router-dom";
 import Authentication from './components/Authentication';
-import Staff from "./components/Staff";
 import Invoice from "./components/Invoice";
 import Dashboard from "./components/Dashboard";
 import RegisterClient from "./components/RegisterClient";
@@ -11,6 +10,7 @@ import FeeCalculator from "./components/FeeCalculator";
 import Home from "./components/Home";
 import Reports from "./components/Reports";
 import ClientList from "./components/ClientList";
+import ServicesList from "./components/ServicesList";
 
 function App() {
   const darkTheme = UseTheme();
@@ -28,7 +28,6 @@ function App() {
         <TopNav toggleColor={toggleColor} darkTheme={darkTheme} />
         {/* Routes */}
         <Routes>
-          <Route path="/Staff" element={<Staff />} />
           <Route path="/Profile" element={<Authentication ThemeStyles={ThemeStyles} />} />
           <Route path="/Dashboard" element={<Dashboard ThemeStyles={ThemeStyles} />} />
           <Route path="/RegisterClient" element={<RegisterClient ThemeStyles={ThemeStyles} />} />
@@ -37,7 +36,9 @@ function App() {
           <Route path="/Invoice" element={<Invoice ThemeStyles={ThemeStyles} />} />
           <Route path="/Reports" element={<Reports />} />
           <Route path="/ClientList" element={<ClientList ThemeStyles={ThemeStyles} />} />
+          <Route path="/ServicesList" element={<ServicesList ThemeStyles={ThemeStyles} />} />
         </Routes>
+        {/* <ServicesList style={ThemeStyles} /> */}
       </main>
     </div>
   );
