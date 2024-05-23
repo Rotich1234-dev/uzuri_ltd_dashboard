@@ -79,10 +79,15 @@ const RegisterClient = ({ ThemeStyles }) => {
     },
   });
 
+  const background = {
+    ...ThemeStyles,
+    backgroundColor: '#FFFAFA',
+  };
+
   return (
     <div
       className="pb-40 px-5 py-7 p-6 w-full h-screen overflow-y-auto"
-      style={ThemeStyles}
+      style={background}
     >
 <<<<<<< HEAD
       <div className="max-w-md mx-auto bg-gray-500 shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -95,8 +100,12 @@ const RegisterClient = ({ ThemeStyles }) => {
         <h2 className="text-gray-800 text-xl text-center mb-4">
 =======
       <div className="max-w-md mx-auto bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+<<<<<<< HEAD
         <h2 className="text-gray-800 text-2xl text-center mb-4">
 >>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
+=======
+        <h2 className="text-gray-800 fond-bold text-2xl text-center mb-4">
+>>>>>>> 304a03f8ea2e47ca69296d2a548655953b9cff70
           Register Client
         </h2>
         {successMessage && (
@@ -367,7 +376,7 @@ const RegisterClient = ({ ThemeStyles }) => {
             ) : null}
           </div>
           <button
-            className="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
             type="submit"
             disabled={formik.isSubmitting}
           >
@@ -377,10 +386,14 @@ const RegisterClient = ({ ThemeStyles }) => {
       </div>
       <button
 <<<<<<< HEAD
+<<<<<<< HEAD
         className="text-gray-500 hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
 =======
         className="bg-gray-900 text-gray-500 hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
 >>>>>>> 11dd6e925a0d7ab62673a9f324e7253cf3a0d568
+=======
+        className="bg-gray-900 text-gray-500 hover:text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+>>>>>>> 304a03f8ea2e47ca69296d2a548655953b9cff70
         onClick={handleBackClick}
       >
         <ArrowBackIcon /> Back

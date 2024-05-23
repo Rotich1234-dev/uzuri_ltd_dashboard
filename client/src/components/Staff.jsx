@@ -4,11 +4,19 @@ import { Button, Select, MenuItem, FormControl } from "@mui/material";
 function StaffTable() {
   const [tableItems, setTableItems] = useState([]);
 
+<<<<<<< HEAD
   useEffect(() => {
     fetch("http://localhost:5000/admin")
       .then((res) => res.json())
       .then((data) => setTableItems(data));
   }, []);
+=======
+    useEffect(() => {
+        fetch("http://localhost:3000/admin")
+        .then(res => res.json())
+        .then(data => setTableItems(data))
+    }, [])
+>>>>>>> 304a03f8ea2e47ca69296d2a548655953b9cff70
 
 <<<<<<< HEAD
   const handleAvailabilityChange = (id, newAvailability) => {

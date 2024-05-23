@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useUser } from "../UserContext";
+import { useNavigate } from "react-router-dom";
 
 function Login({ switchForm, ThemeStyles }) {
   const [showPassword, setShowPassword] = useState(false);
   const { setUser } = useUser();
-
+ 
+  const navigate = useNavigate();
+  
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -20,23 +23,32 @@ function Login({ switchForm, ThemeStyles }) {
     }),
     onSubmit: (values, { setSubmitting }) => {
       console.log(values);
-      fetch("http://localhost:3000/users", {
-        method: "GET",
+      fetch("http://127.0.0.1:8080/api/auth/admin_login", {
+        method: "POST",
+                headers: {
+          "Content-Type": "application/json",
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(values),
+
       })
         .then((res) => res.json())
-        .then((users) => {
-          const user = users.find(
-            (u) => u.email === values.email && u.password === values.password
-          );
-          if (user) {
-            console.log("Login successful");
-            setUser(user);
-            window.location.href = "/dashboard";
-          } else {
-            console.log("Invalid credentials");
-          }
-          setSubmitting(false);
-        });
+        .then(() => {
+          navigate("/dashboard");
+        //   console.log(users);
+        //   if(Array.isArray(users)) {
+        //   const user = users.find(
+        //     (u) => u.email === values.email && u.password === values.password
+        //   );
+        //   if (user) {
+        //     console.log("Login successful");
+        //     setUser(user);
+        //     navigate("/dashboard");
+        //   } else {
+        //     console.log("Invalid credentials");
+        //   }
+        //   setSubmitting(false);
+         });
     },
   });
 
@@ -52,9 +64,6 @@ function Login({ switchForm, ThemeStyles }) {
 =======
       style={{
         ...ThemeStyles,
-        // backgroundImage: 'url("src/assets/Ripples.jpeg")',
-        // backgroundSize: "cover",
-        // backgroundPosition: "center",
       }}
     >
       <div className="max-w-md w-full bg-gray-500 shadow-lg rounded-lg mb-9">
@@ -158,11 +167,11 @@ function Register({ switchForm, ThemeStyles }) {
     }),
     onSubmit: (values, { setSubmitting }) => {
       console.log(values);
-
-      fetch("http://localhost:3000/users", {
+      fetch("http://127.0.0.1:8080/api/auth/admin_signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify(values),
       })
