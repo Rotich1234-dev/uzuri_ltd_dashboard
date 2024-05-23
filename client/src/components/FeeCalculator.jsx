@@ -20,7 +20,7 @@ const FeeCalculator = ({ theme_styles }) => {
   const [pipe_length, set_pipe_length] = useState("");
   const [number_of_outlets, set_number_of_outlets] = useState("");
   const [tank_capacity, set_tank_capacity] = useState("");
-  const [total_amount, set_total_amount] = useState(null);
+  const [total_cost, set_total_cost] = useState(null);
   const [tax_amount, set_tax_amount] = useState(null);
   const [cost_breakdown, set_cost_breakdown] = useState([]);
   const [client_categories, set_client_categories] = useState({
@@ -103,20 +103,15 @@ const FeeCalculator = ({ theme_styles }) => {
 
     const client = clients.find((client) => client.client_id === parseInt(client_id));
     if (client) {
-      console.log('Selected Client:', client);
       set_client_email(client.email);
 
       const category = client_categories[client.category_id];
-      console.log('Client Category:', category); 
-
       if (category) {
         set_client_type(category);
       } else {
-        console.warn(`No category found for client.category_id: ${client.category_id}`); 
         set_client_type({});
       }
     } else {
-      console.warn(`No client found with client_id: ${client_id}`); 
       set_client_type({});
       set_client_email("");
     }
@@ -155,14 +150,14 @@ const FeeCalculator = ({ theme_styles }) => {
     set_pipe_length("");
     set_number_of_outlets("");
     set_tank_capacity("");
-    set_total_amount(null);
+    set_total_cost(null);
     set_tax_amount(null);
     set_cost_breakdown([]);
   };
 
   const handle_submit = async (e) => {
     e.preventDefault();
-  
+
     const calculation_data = {
       client_Id: selected_client_id,
       client_type: client_type.category, 
@@ -176,17 +171,12 @@ const FeeCalculator = ({ theme_styles }) => {
       number_of_outlets: number_of_outlets,
       tank_capacity: tank_capacity
     };
-  
-    console.log(calculation_data);  
-    console.log(JSON.stringify(calculation_data));
-  
+
     fetch("http://127.0.0.1:8080/api/admin/routes/fees", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         'Access-Control-Allow-Origin': '*',
-
-
       },
       body: JSON.stringify(calculation_data),
     })
@@ -197,15 +187,16 @@ const FeeCalculator = ({ theme_styles }) => {
       return response.json();
     })
     .then(result => {
-      set_total_amount(result.total_amount);
-      set_tax_amount(result.tax_amount);
-      set_cost_breakdown(result.cost_breakdown);
+      set_total_cost(result.total_cost || 0);
+      set_tax_amount(result.tax_amount || 0);
+      set_cost_breakdown(result.cost_breakdown || []);
     })
     .catch(error => {
       console.error(error.message);
     });
+    console.log(calculation_data);
   };
-  
+
   const save_client_details = async () => {
     const client_details = {
       client_id: selected_client_id,
@@ -219,16 +210,15 @@ const FeeCalculator = ({ theme_styles }) => {
       pipe_length,
       number_of_outlets,
       tank_capacity,
-      total_amount,
+      total_cost,
       tax_amount,
     };
-  
+
     fetch("http://127.0.0.1:8080/api/admin/routes/fees", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         'Access-Control-Allow-Origin': '*',
-
       },
       body: JSON.stringify(client_details),
     })
@@ -245,9 +235,9 @@ const FeeCalculator = ({ theme_styles }) => {
       console.error("Error saving client details:", error);
       alert("Failed to save client details.");
     });
+  
   };
-  
-  
+
 
   const background = {
     ...theme_styles,
@@ -523,30 +513,76 @@ const FeeCalculator = ({ theme_styles }) => {
           </div>
         </form>
 
-        {total_amount !== null && (
-          <>
-            <div className="mt-6 text-center">
-              <h2 className="text-gray-900 text-xl font-semibold mb-2">Breakdown of Costs</h2>
-              <ul className="text-gray-700 text-lg mb-4">
-                {cost_breakdown.map((item, index) => (
-                  <li key={index} className="flex justify-between py-2 px-4 border-b border-gray-300">
-                    <span>{item.label}</span>
-                    <span>Ksh. {item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                  </li>
-                ))}
-              </ul>
-              <h2 className="text-gray-900 text-xl font-semibold mb-2">Total Cost</h2>
-              <p className="text-gray-900 text-lg font-bold">{`Ksh. ${total_amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</p>
-              <h2 className="text-gray-900 text-xl font-semibold mb-2">Tax Amount (16%)</h2>
-              <p className="text-gray-900 text-lg font-bold">{`Ksh. ${tax_amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</p>
-            </div>
-            <div className="flex justify-center mt-4">
-              <button type="button" className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-900" onClick={save_client_details}>
-                Save
-              </button>
-            </div>
-          </>
-        )}
+        {total_cost !== null && (
+  <>
+    <div className="mt-6 text-center">
+      <h2 className="text-gray-900 text-xl font-semibold mb-2">Breakdown of Costs</h2>
+      <ul className="text-gray-700 text-lg mb-4">
+        {cost_breakdown.map((item, index) => (
+          <li key={index} className="flex justify-between py-2 px-4 border-b border-gray-300">
+            <span>{item.label}</span>
+            <span>Ksh. {item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="text-left">
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Client Id:</span>
+          <span className="text-gray-900 text-lg font-bold">{selected_client_id}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Client Type:</span>
+          <span className="text-gray-900 text-lg font-bold">{client_type.category}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Drilling Services:</span>
+          <span className="text-gray-900 text-lg font-bold">{selected_drilling_services.join(', ')}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Pump Types:</span>
+          <span className="text-gray-900 text-lg font-bold">{selected_pump_types.join(', ')}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Pipe Types:</span>
+          <span className="text-gray-900 text-lg font-bold">{selected_pipe_types.join(', ')}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Pipe Diameter:</span>
+          <span className="text-gray-900 text-lg font-bold">{pipe_diameter}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Pipe Length:</span>
+          <span className="text-gray-900 text-lg font-bold">{pipe_length}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Number of Outlets:</span>
+          <span className="text-gray-900 text-lg font-bold">{number_of_outlets}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Tank Capacity:</span>
+          <span className="text-gray-900 text-lg font-bold">{tank_capacity}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Tax Amount (16%):</span>
+          <span className="text-gray-900 text-lg font-bold">{`Ksh. ${tax_amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
+        </div>
+        <div className="flex justify-between py-2 px-4 border-b border-gray-300">
+          <span className="text-gray-900 text-lg font-semibold">Total Cost:</span>
+          <span className="text-gray-900 text-lg font-bold">{`Ksh. ${total_cost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
+        </div>
+      </div>
+    </div>
+    <div className="flex justify-center mt-4">
+      <button
+        type="button"
+        className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-900"
+        onClick={save_client_details}
+      >
+        Save
+      </button>
+    </div>
+  </>
+)}
       </div>
       <button
         className="py-2 px-3 mt-4 flex items-center justify-center bg-gray-500 text-white font-bold rounded-full focus:outline-none focus:shadow-outline hover:bg-gray-900"
