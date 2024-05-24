@@ -155,7 +155,7 @@ const background = {
         className="py-2 px-3 mt-4 flex items-center justify-center bg-gray-500 text-white font-bold rounded-full focus:outline-none focus:shadow-outline hover:bg-gray-900"
         onClick={handleBackClick}
       >
-        <ArrowBackIcon /> Back
+         Logout
       </button>
     </div>
   );

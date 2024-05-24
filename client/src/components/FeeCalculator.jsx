@@ -475,7 +475,7 @@ const FeeCalculator = ({ theme_styles }) => {
         {total_cost !== null && (
           <>
             <div className="mt-6 text-center">
-              <h2 className="text-gray-900 text-xl font-semibold mb-2">Breakdown of Costs</h2>
+              <h2 className="text-gray-900 text-xl font-semibold mb-2">Summary & Total Costs Breakdown</h2>
               <ul className="text-gray-700 text-lg mb-4">
                 {cost_breakdown.map((item, index) => (
                   <li key={index} className="flex justify-between py-2 px-4 border-b border-gray-300">
