@@ -50,7 +50,7 @@ const RegisterClient = ({ ThemeStyles }) => {
           setSuccessMessage("Client registered successfully!");
           setTimeout(() => {
             window.location.reload();
-          }, 200);
+          },1000);
         })
         .catch((error) => {
           console.error("Error:", error);

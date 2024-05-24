@@ -171,6 +171,7 @@ function Register({ switchForm, ThemeStyles }) {
         .then((data) => {
           console.log(data);
           setSubmitting(false);
+           setSuccessMessage("Staff registered successfully!");
           switchForm(); // Switch to login form
         });
     },
