@@ -22,14 +22,26 @@ function SideBar({ toggleColor, darkTheme }) {
   const { user } = useUser();
   const navigate = useNavigate();
 
-  const ThemeStyles = {
-    backgroundColor: darkTheme ? "#16182F" : "rgb(209, 213, 219)",
-    color: darkTheme ? "White" : "Black"
-  };
+//   const ThemeStyles = {
+//     backgroundColor: darkTheme ? "#282A36" : "#E0E0E0",
+//     color: darkTheme ? "#FFFFFF" : "#000000"
+// };
 
-  const MenuStyles = {
-    backgroundColor: darkTheme ? "#16182F" : "rgb(255, 255, 255)"
-  };
+const ThemeStyles = {
+  backgroundColor: darkTheme ? "#282A36" : "#D3D3D3",
+  color: darkTheme ? "#FFFFFF" : "#000000"
+};
+
+  
+//   const MenuStyles = {
+//     backgroundColor: darkTheme ? "#282A36" : "#E0E0E0"
+// };
+
+const MenuStyles = {
+    backgroundColor: darkTheme ? "#282A36" : "#D3D3D3"
+};
+
+ 
 
   const handleLogout = () => {
     navigate("/home");
@@ -86,7 +98,7 @@ function SideBar({ toggleColor, darkTheme }) {
               <Item icon={<HomeIcon />} title="Home" to="/Home" />
             </Box>
           </Menu>
-          <Menu className="mt-auto" style={MenuStyles}>
+          {/* <Menu className="mt-auto" style={MenuStyles}>
             <Box className="flex items-center justify-center py-3">
               <IconButton onClick={handleLogout} className="text-black hover:text-gray-600">
                 <ExitToAppIcon className="text-2xl" />
@@ -95,7 +107,7 @@ function SideBar({ toggleColor, darkTheme }) {
                 )}
               </IconButton>
             </Box>
-          </Menu>
+          </Menu> */}
         </Sidebar>
       </Box>
     </div>
