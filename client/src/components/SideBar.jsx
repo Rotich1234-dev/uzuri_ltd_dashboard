@@ -11,7 +11,7 @@ const Item = ({ title, to, icon }) => {
   return (
     <Link to={to}>
       <MenuItem className="text-black hover:text-gray-600" icon={icon}>
-        <h4 className="text-extrabold text-green-300 hover:text-gray-600">{title}</h4>
+        <h4 className="text-xl text-gray-400 hover:text-gray-600">{title}</h4>
       </MenuItem>
     </Link>
   );
@@ -94,7 +94,7 @@ const MenuStyles = {
             )}
           </Menu>
           <Menu className="mt-4" style={MenuStyles}>
-            <Box>
+            <Box className="text-gray-300">
               <Item icon={<HomeIcon />} title="Home" to="/Home" />
             </Box>
           </Menu>
