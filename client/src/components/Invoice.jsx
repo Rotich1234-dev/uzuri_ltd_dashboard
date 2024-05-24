@@ -18,11 +18,10 @@ const Invoice = ({ ThemeStyles }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
-  const clientCategories = {
-    1: { type: "Industrial", surveyFee: 20000, localAuthorityFee: 50000 },
-    2: { type: "Commercial", surveyFee: 15000, localAuthorityFee: 30000 },
-    3: { type: "Domestic", surveyFee: 7000, localAuthorityFee: 10000 },
-  };
+  const [drillingServices, setDrillingServices] = useState([]);
+  const [pumpTypes, setPumpTypes] = useState([]);
+  const [pipeTypes, setPipeTypes] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const validationSchema = Yup.object({
     client_id: Yup.string().required("Required"),
@@ -132,25 +131,17 @@ const Invoice = ({ ThemeStyles }) => {
     doc.text(`Project Status: ${formik.values.project_status}`, 20, 70);
     doc.text(`Description: ${formik.values.description}`, 20, 80);
     doc.text(`Client ID: ${formik.values.client_id}`, 20, 90);
-    doc.text(
-      `Client Category: ${
-        fees.client_categories?.[formik.values.client_category]?.type || ""
-      }`,
-      20,
-      100
+    const category = categories.find(
+      (category) => category.id === parseInt(formik.values.client_category)
     );
+    doc.text(`Client Category: ${category?.category_name || ""}`, 20, 100);
     doc.text(
-      `Survey Fee: ${formatCurrency(
-        fees.client_categories?.[formik.values.client_category]?.survey_fee || 0
-      )}`,
+      `Survey Fee: ${formatCurrency(category?.cat_surveyfee || 0)}`,
       20,
       110
     );
     doc.text(
-      `Local Authority Fee: ${formatCurrency(
-        fees.client_categories?.[formik.values.client_category]
-          ?.local_authority_fee || 0
-      )}`,
+      `Local Authority Fee: ${formatCurrency(category?.cat_localfee || 0)}`,
       20,
       120
     );
@@ -161,11 +152,11 @@ const Invoice = ({ ThemeStyles }) => {
       head: [["Service", "Cost"]],
       body: [
         ...formik.values.drilling_id.map((service) => [
-          service,
+          drillingServices.find((s) => s.id === service)?.name || service,
           formatCurrency(fees.drilling_costs?.[service] || 0),
         ]),
         ...formik.values.pump_id.map((pump) => [
-          pump,
+          pumpTypes.find((p) => p.id === pump)?.name || pump,
           formatCurrency(fees.pump_costs?.[pump] || 0),
         ]), // Using pump names
         [
@@ -235,22 +226,63 @@ const Invoice = ({ ThemeStyles }) => {
       to_name: formik.values.client_name,
       invoice_number: formik.values.invoice_number,
       invoice_date: formik.values.date,
+      project_status: formik.values.project_status,
+      description: formik.values.description,
+      client_id: formik.values.client_id,
+      client_category: categories.find(
+        (category) => category.id === parseInt(formik.values.client_category)
+        )?.category_name || "",
+      survey_fee: formatCurrency( 
+        categories.find(
+          (category) => category.id === parseInt(formik.values.client_category)
+        )?.cat_surveyfee || 0
+      ),
+      local_authority_fee: formatCurrency(
+        categories.find(
+          (category) => category.id === parseInt(formik.values.client_category)
+        )?.cat_localfee || 0
+      ),
+      drilling_services: [
+       ...formik.values.drilling_id.map(
+          (service) => `${drillingServices.find((s) => s.id === service)?.name || service}`
+        ), 
+      ].join("\n"),
+      pump_services: [
+       ...formik.values.pump_id.map(
+          (pump) => `${pumpTypes.find((p) => p.id === pump)?.name || pump}`
+        ), 
+      ].join("\n"),
+      pipe_type: formik.values.pipe_id,
+      pipe_diameter: formik.values.pipe_diameter,
+      pipe_length: formik.values.pipe_length,
+      number_of_outlets: formik.values.number_of_outlets,
+      tank_capacity: formik.values.tank_capacity,
+      total_cost_before_tax: formatCurrency(
+        formik.values.total_cost_before_tax
+      ),
+      tax_amount: formatCurrency(formik.values.tax_amount),
+      total_cost_after_tax: formatCurrency(
+        formik.values.total_cost_after_tax
+      ),
       services: [
-        ...formik.values.drilling_id.map((service) => `${service}`), // Using service names
-        ...formik.values.pump_id.map((pump) => `${pump}`), // Using pump names
+     
+        ``,
+        `Drilling Services (${formik.values.drilling_id.join(", ")})`,
+        `Pump Type (${formik.values.pump_id.join(", ")})`,
+        `Pipe Type (${formik.values.pipe_id})`,
+        `Pipe Diameter (${formik.values.pipe_diameter} inches)`,
+        `Pipe Length (${formik.values.pipe_length} mm)`,
+        `Pump Type (${formik.values.pump_id })`,
         `Pipe Type (${formik.values.pipe_id})`,
         `Pipe Diameter (${formik.values.pipe_diameter} inches)`,
         `Pipe Length (${formik.values.pipe_length} mm)`,
         `Number Of Outlets (${formik.values.number_of_outlets})`,
         `Tank Capacity (${formik.values.tank_capacity} liters)`,
-        `Total Cost Before Tax: ${formatCurrency(
-          formik.values.total_cost_before_tax
-        )}`,
+        `Total Cost Before Tax: ${formatCurrency(formik.values.total_cost_before_tax)}`,
         `Tax Amount (16%): ${formatCurrency(formik.values.tax_amount)}`,
-        `Total Cost After Tax: ${formatCurrency(
-          formik.values.total_cost_after_tax
-        )}`,
+        `Total Cost After Tax: ${formatCurrency(formik.values.total_cost_after_tax)}`,
       ].join("\n"),
+      
       pdf_base64: pdfBase64,
     };
 
@@ -320,6 +352,34 @@ const Invoice = ({ ThemeStyles }) => {
         setError(error.toString());
         setLoading(false);
       });
+  }, []);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8080/api/admin/routes/drillingservices")
+      .then((response) => response.json())
+      .then((data) => setDrillingServices(data))
+      .catch((error) => setError(error.toString()));
+  }, []);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8080/api/admin/routes/pumpservices")
+      .then((response) => response.json())
+      .then((data) => setPumpTypes(data))
+      .catch((error) => setError(error.toString()));
+  }, []);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8080/api/admin/routes/tank")
+      .then((response) => response.json())
+      .then((data) => setPipeTypes(data))
+      .catch((error) => setError(error.toString()));
+  }, []);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8080/api/admin/routes/categories")
+      .then((response) => response.json())
+      .then((data) => setCategories(data))
+      .catch((error) => setError(error.toString()));
   }, []);
 
   const handleClientChange = (e) => {
@@ -589,9 +649,9 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select service" />
-                  {fees?.drilling_services?.map((drillingService, index) => (
-                    <option key={index} value={drillingService}>
-                      {drillingService}
+                  {drillingServices.map((service, index) => (
+                    <option key={index} value={service.id}>
+                      {service.name}
                     </option>
                   ))}
                 </select>
@@ -606,7 +666,8 @@ const Invoice = ({ ThemeStyles }) => {
                       key={index}
                       className="flex items-center justify-between"
                     >
-                      {drillingService}
+                      {drillingServices.find((s) => s.id === drillingService)?.name ||
+                        drillingService}
                       <button
                         type="button"
                         className="mt-2 bg-red-500 text-white font-bold gap-2 py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
@@ -652,9 +713,9 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select pump type" />
-                  {fees?.pump_types?.map((pumpType, index) => (
-                    <option key={index} value={pumpType}>
-                      {pumpType}
+                  {pumpTypes.map((pump, index) => (
+                    <option key={index} value={pump.id}>
+                      {pump.name}
                     </option>
                   ))}
                 </select>
@@ -669,7 +730,7 @@ const Invoice = ({ ThemeStyles }) => {
                       key={index}
                       className="flex items-center justify-between"
                     >
-                      {pumpType}
+                      {pumpTypes.find((p) => p.id === pumpType)?.name || pumpType}
                       <button
                         type="button"
                         className="bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline hover:bg-red-900"
@@ -704,9 +765,9 @@ const Invoice = ({ ThemeStyles }) => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="" label="Select pipe type" />
-                  {fees?.pipe_types?.map((pipe_type, index) => (
-                    <option key={index} value={pipe_type}>
-                      {pipe_type}
+                  {pipeTypes.map((pipe_type, index) => (
+                    <option key={index} value={pipe_type.id}>
+                      {pipe_type.name}
                     </option>
                   ))}
                 </select>
@@ -906,7 +967,7 @@ const Invoice = ({ ThemeStyles }) => {
               <strong>From:</strong> Uzuri Limited Accounts Department
             </p>
             <p>
-              <strong>To:</strong> {formik.values.client_name} (
+              <strong>To:</strong>  (
               {formik.values.client_email})
             </p>
             <p>
@@ -926,25 +987,29 @@ const Invoice = ({ ThemeStyles }) => {
             </p>
             <p>
               <strong>Client Category:</strong>{" "}
-              {fees?.client_categories?.[formik.values.client_category]?.type ||
-                ""}
+              {categories.find(
+                (category) => category.id === parseInt(formik.values.client_category)
+              )?.category_name || ""}
             </p>
             <p>
               <strong>Survey Fee:</strong>{" "}
               {formatCurrency(
-                fees?.client_categories?.[formik.values.client_category]
-                  ?.survey_fee || 0
+                categories.find(
+                  (category) => category.id === parseInt(formik.values.client_category)
+                )?.cat_surveyfee || 0
               )}
             </p>
             <p>
               <strong>Local Authority Fee:</strong>{" "}
               {formatCurrency(
-                fees?.client_categories?.[formik.values.client_category]
-                  ?.local_authority_fee || 0
+                categories.find(
+                  (category) => category.id === parseInt(formik.values.client_category)
+                )?.cat_localfee || 0
               )}
             </p>
             <h3 className="text-xl font-semibold mb-2">Cost Breakdown</h3>
             <ul className="mb-4">
+              <li>Drilling Services ({formik.values.drilling_id})</li>
               <li>Pipe Type ({formik.values.pipe_id}) </li>
               <li>Pipe Diameter ({formik.values.pipe_diameter} inches)</li>
               <li>Pipe Length ({formik.values.pipe_length} mm)</li>
@@ -977,4 +1042,5 @@ const Invoice = ({ ThemeStyles }) => {
 };
 
 export default Invoice;
+
 

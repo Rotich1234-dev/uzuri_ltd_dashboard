@@ -531,15 +531,7 @@ const FeeCalculator = ({ theme_styles }) => {
                 </div>
               </div>
             </div>
-            {/* <div className="flex justify-center mt-4">
-              <button
-                type="button"
-                className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-900"
-                onClick={save_client_details}
-              >
-                Save
-              </button>
-            </div> */}
+            
           </>
         )}
       </div>
