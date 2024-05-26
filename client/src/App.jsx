@@ -16,10 +16,10 @@ function App() {
   const darkTheme = UseTheme();
   const toggleColor = UpdateTheme();
   
- const ThemeStyles = {
-    backgroundColor: darkTheme ? "rgb(0, 191, 255)" : "rgb(173, 216, 230)", // Deep Sky Blue / Light Blue
-    color: darkTheme ? "rgb(255, 255, 255)" : "rgb(0, 0, 139)", // White / Dark Blue
-};
+const ThemeStyles = {
+    backgroundColor: darkTheme ? "rgb(46, 45, 45)" : "rgb(171, 163, 159)",
+    color: darkTheme ? "rgb(240, 240, 240)" : "rgb(26, 46, 5)",
+  };
 
 
   return (
