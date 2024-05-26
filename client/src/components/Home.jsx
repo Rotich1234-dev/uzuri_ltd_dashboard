@@ -9,7 +9,7 @@ const Home = ({ ThemeStyles }) => {
       className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto"
       style={{
         ...ThemeStyles,
-        backgroundImage: 'url("/src/assets/water.jpeg")',
+        backgroundImage: 'url("/src/assets/water.png")',
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

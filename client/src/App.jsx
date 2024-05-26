@@ -17,8 +17,10 @@ function App() {
   const toggleColor = UpdateTheme();
   
   const ThemeStyles = {
+    backgroundImage: "url('src/assets/water.png')",
     backgroundColor: darkTheme ? "rgb(46, 45, 45)" : "rgb(171, 163, 159)",
     color: darkTheme ? "rgb(240, 240, 240)" : "rgb(26, 46, 5)",
+    backgroundSize: "cover",
   };
 
   return (
