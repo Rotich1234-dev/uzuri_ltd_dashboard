@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import { Box } from "@mui/material";
+import Bg from "../assets/water.png";
 
 const Authentication = lazy(() => import("./Authentication"));
 
@@ -9,7 +10,7 @@ const Home = ({ ThemeStyles }) => {
       className="pb-40 px-5 py-7 w-full h-screen overflow-y-auto"
       style={{
         ...ThemeStyles,
-        backgroundImage: 'url("/src/assets/water.jpeg")',
+        backgroundImage: `url(${Bg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

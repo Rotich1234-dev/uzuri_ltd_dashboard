@@ -11,16 +11,19 @@ import Home from "./components/Home";
 import Reports from "./components/Reports";
 import ClientList from "./components/ClientList";
 import ServicesList from "./components/ServicesList";
+import Bg from "../src/assets/water.png";
 
 function App() {
   const darkTheme = UseTheme();
   const toggleColor = UpdateTheme();
 
-const ThemeStyles = {
-    backgroundImage: "url('src/assets/water.png')",
-    color: darkTheme ? "rgb(255, 255, 255)" : "rgb(0, 0, 139)",
+  
+  const ThemeStyles = {
+    backgroundImage: `url(${Bg})`,
+    backgroundColor: darkTheme ? "rgb(46, 45, 45)" : "rgb(171, 163, 159)",
+    color: darkTheme ? "rgb(240, 240, 240)" : "rgb(26, 46, 5)",
     backgroundSize: "cover",
-    backgroundBlendMode: "overlay",
+
   };
   
 
