@@ -16,13 +16,18 @@ import Bg from "../src/assets/water.png";
 function App() {
   const darkTheme = UseTheme();
   const toggleColor = UpdateTheme();
+
   
   const ThemeStyles = {
     backgroundImage: `url(${Bg})`,
     backgroundColor: darkTheme ? "rgb(46, 45, 45)" : "rgb(171, 163, 159)",
     color: darkTheme ? "rgb(240, 240, 240)" : "rgb(26, 46, 5)",
     backgroundSize: "cover",
+
   };
+  
+
+
 
   return (
     <div className="app overflow-hidden" style={ThemeStyles}>
