@@ -15,11 +15,15 @@ import ServicesList from "./components/ServicesList";
 function App() {
   const darkTheme = UseTheme();
   const toggleColor = UpdateTheme();
-  
+
 const ThemeStyles = {
-    backgroundColor: darkTheme ? "rgb(46, 45, 45)" : "rgb(171, 163, 159)",
-    color: darkTheme ? "rgb(240, 240, 240)" : "rgb(26, 46, 5)",
+    backgroundImage: "url('src/assets/water.png')",
+    color: darkTheme ? "rgb(255, 255, 255)" : "rgb(0, 0, 139)",
+    backgroundSize: "cover",
+    backgroundBlendMode: "overlay",
   };
+  
+
 
 
   return (
