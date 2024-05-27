@@ -121,11 +121,7 @@ const Invoice = ({ ThemeStyles }) => {
 
     doc.text("Invoice", 20, 20);
     doc.text("From: Uzuri Limited Accounts Department", 20, 30);
-    doc.text(
-      `To: ${formik.values.client_name} (${formik.values.client_email})`,
-      20,
-      40
-    );
+    doc.text(`To: (${formik.values.client_email})`, 20, 40);
     doc.text(`Invoice #: ${formik.values.invoice_number}`, 20, 50);
     doc.text(`Date: ${formik.values.date}`, 20, 60);
     doc.text(`Project Status: ${formik.values.project_status}`, 20, 70);
@@ -220,19 +216,17 @@ const Invoice = ({ ThemeStyles }) => {
     const doc = generatePDF();
     if (!doc) return;
     const pdfBase64 = doc.output("datauristring");
-
+  
     const templateParams = {
       to_email: formik.values.client_email,
-      to_name: formik.values.client_name,
       invoice_number: formik.values.invoice_number,
       invoice_date: formik.values.date,
       project_status: formik.values.project_status,
       description: formik.values.description,
-      client_id: formik.values.client_id,
       client_category: categories.find(
         (category) => category.id === parseInt(formik.values.client_category)
-        )?.category_name || "",
-      survey_fee: formatCurrency( 
+      )?.category_name || "",
+      survey_fee: formatCurrency(
         categories.find(
           (category) => category.id === parseInt(formik.values.client_category)
         )?.cat_surveyfee || 0
@@ -242,50 +236,25 @@ const Invoice = ({ ThemeStyles }) => {
           (category) => category.id === parseInt(formik.values.client_category)
         )?.cat_localfee || 0
       ),
-      drilling_services: [
-       ...formik.values.drilling_id.map(
-          (service) => `${drillingServices.find((s) => s.id === service)?.name || service}`
-        ), 
-      ].join("\n"),
-      pump_services: [
-       ...formik.values.pump_id.map(
-          (pump) => `${pumpTypes.find((p) => p.id === pump)?.name || pump}`
-        ), 
-      ].join("\n"),
-      pipe_type: formik.values.pipe_id,
-      pipe_diameter: formik.values.pipe_diameter,
-      pipe_length: formik.values.pipe_length,
-      number_of_outlets: formik.values.number_of_outlets,
-      tank_capacity: formik.values.tank_capacity,
-      total_cost_before_tax: formatCurrency(
-        formik.values.total_cost_before_tax
-      ),
-      tax_amount: formatCurrency(formik.values.tax_amount),
-      total_cost_after_tax: formatCurrency(
-        formik.values.total_cost_after_tax
-      ),
       services: [
-     
-        ``,
-        `Drilling Services (${formik.values.drilling_id.join(", ")})`,
-        `Pump Type (${formik.values.pump_id.join(", ")})`,
-        `Pipe Type (${formik.values.pipe_id})`,
-        `Pipe Diameter (${formik.values.pipe_diameter} inches)`,
-        `Pipe Length (${formik.values.pipe_length} mm)`,
-        `Pump Type (${formik.values.pump_id })`,
-        `Pipe Type (${formik.values.pipe_id})`,
-        `Pipe Diameter (${formik.values.pipe_diameter} inches)`,
-        `Pipe Length (${formik.values.pipe_length} mm)`,
-        `Number Of Outlets (${formik.values.number_of_outlets})`,
-        `Tank Capacity (${formik.values.tank_capacity} liters)`,
+        `Drilling Services: ${formik.values.drilling_id
+          .map((id) => drillingServices.find((s) => s.id === id)?.name || id)
+          .join(", ")}`,
+        `Pump Types: ${formik.values.pump_id
+          .map((id) => pumpTypes.find((p) => p.id === id)?.name || id)
+          .join(", ")}`,
+        `Pipe Type: ${pipeTypes.find((p) => p.id === formik.values.pipe_id)?.name || formik.values.pipe_id}`,
+        `Pipe Diameter: ${formik.values.pipe_diameter} inches`,
+        `Pipe Length: ${formik.values.pipe_length} mm`,
+        `Number Of Outlets: ${formik.values.number_of_outlets}`,
+        `Tank Capacity: ${formik.values.tank_capacity} liters`,
         `Total Cost Before Tax: ${formatCurrency(formik.values.total_cost_before_tax)}`,
         `Tax Amount (16%): ${formatCurrency(formik.values.tax_amount)}`,
         `Total Cost After Tax: ${formatCurrency(formik.values.total_cost_after_tax)}`,
       ].join("\n"),
-      
       pdf_base64: pdfBase64,
     };
-
+  
     emailjs
       .send(
         "service_ubxhk3m",
@@ -302,7 +271,7 @@ const Invoice = ({ ThemeStyles }) => {
         alert("Failed to send email.");
       });
   };
-
+  
   const handlePrint = () => {
     const doc = generatePDF();
     if (doc) {
@@ -967,8 +936,7 @@ const Invoice = ({ ThemeStyles }) => {
               <strong>From:</strong> Uzuri Limited Accounts Department
             </p>
             <p>
-              <strong>To:</strong>  (
-              {formik.values.client_email})
+              <strong>To:</strong> {formik.values.client_email}
             </p>
             <p>
               <strong>Invoice #:</strong> {formik.values.invoice_number}
@@ -1042,5 +1010,3 @@ const Invoice = ({ ThemeStyles }) => {
 };
 
 export default Invoice;
-
-
