@@ -80,7 +80,7 @@ const Invoice = ({ ThemeStyles }) => {
     onSubmit: (values, { setSubmitting, resetForm }) => {
       console.log(values);
 
-      fetch("http://localhost:3000/invoices", {
+      fetch("https://uzuri-limited-backend.onrender.com/api/admin/routes/invoices", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
