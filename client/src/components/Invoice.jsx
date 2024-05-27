@@ -80,14 +80,46 @@ const Invoice = ({ ThemeStyles }) => {
     onSubmit: (values, { setSubmitting, resetForm }) => {
       console.log(values);
 
+      const drilling_name = values.drilling_id.map(
+        (id) => drillingServices.find((s) => s.id === id)?.name || id
+      ).join(", ");
+      const pump_name = values.pump_id.map(
+        (id) => pumpTypes.find((p) => p.id === id)?.name || id
+      ).join(", ");
+      const pipe_name = pipeTypes.find((p) => p.id === values.pipe_id)?.name || values.pipe_id;
+
+      const invoiceData = {
+        client_id: values.client_id,
+        client_name: values.client_name,
+        email: values.client_email,
+        client_category: values.client_category,
+        invoice_number: values.invoice_number,
+        date: values.date,
+        project_status: values.project_status,
+        drilling_name,
+        pump_name,
+        pipe_name,
+        pipe_length: values.pipe_length,
+        number_of_outlets: values.number_of_outlets,
+        tank_capacity: values.tank_capacity,
+        total_cost_before_tax: values.total_cost_before_tax,
+        tax_amount: values.tax_amount,
+        total_cost_after_tax: values.total_cost_after_tax,
+      };
+
       fetch("https://uzuri-limited-backend.onrender.com/api/admin/routes/invoices", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(invoiceData),
       })
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Network response was not ok ' + res.statusText);
+          }
+          return res.json();
+        })
         .then((data) => {
           console.log(data);
           setSubmitting(false);
@@ -216,7 +248,7 @@ const Invoice = ({ ThemeStyles }) => {
     const doc = generatePDF();
     if (!doc) return;
     const pdfBase64 = doc.output("datauristring");
-  
+
     const templateParams = {
       to_email: formik.values.client_email,
       invoice_number: formik.values.invoice_number,
@@ -254,7 +286,7 @@ const Invoice = ({ ThemeStyles }) => {
       ].join("\n"),
       pdf_base64: pdfBase64,
     };
-  
+
     emailjs
       .send(
         "service_ubxhk3m",
@@ -271,7 +303,7 @@ const Invoice = ({ ThemeStyles }) => {
         alert("Failed to send email.");
       });
   };
-  
+
   const handlePrint = () => {
     const doc = generatePDF();
     if (doc) {
@@ -889,13 +921,13 @@ const Invoice = ({ ThemeStyles }) => {
               </button>
             </div>
             <div className="flex justify-between mb-6">
-              <button
+              {/* <button
                 type="submit"
                 className="bg-green-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-green-700"
                 disabled={formik.isSubmitting}
               >
                 {formik.isSubmitting ? "Creating..." : "Save Invoice"}
-              </button>
+              </button> */}
               <button
                 type="button"
                 className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline hover:bg-blue-700"
