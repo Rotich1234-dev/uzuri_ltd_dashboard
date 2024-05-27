@@ -269,6 +269,7 @@ const Invoice = ({ ThemeStyles }) => {
         )?.cat_localfee || 0
       ),
       services: [
+        ``,
         `Drilling Services: ${formik.values.drilling_id
           .map((id) => drillingServices.find((s) => s.id === id)?.name || id)
           .join(", ")}`,
